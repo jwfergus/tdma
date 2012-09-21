@@ -28,4 +28,10 @@ Still todo
 	
 7. consider adjusting sleep time to ensure the entire switching process occurs in less than 1s
 
+8. create startup routine that gets initialization data from central server
+
+	8.1 including time window size
+
+9. create function to modify time window size
+
 
