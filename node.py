@@ -2,7 +2,7 @@
 
 ##################
 # Initial MEL-node-server
-# v0.1
+# v0.2
 # author: Joshua Ferguson <jwfergus@asu.edu>
 # 
 ##################
@@ -26,7 +26,7 @@ local_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 local_socket.bind((ip,port))
 local_socket.listen(1)
 
-connection, address = local_socket.accept()
+
 print 'Node - Connection address:', address
 
 # Check the key
