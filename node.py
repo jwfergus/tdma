@@ -35,32 +35,30 @@ time.sleep(0.5)
 
 while True:
 	try:
-		# Close Connections
-		#
-		###################
+		close_connections() # Close Connections
 		open_connect = False
 		while not open_connect:
-			#block for queue command
-			encrypted_command = command_queue.get(True)
+			encrypted_command = command_queue.get(True) # block for queue command
 			if security_functions.key_check(command):
 				if security_functions.get_command(encrypted_command) == 'open':
 					open_connect = True
-					# Open Connections
-					#
-					##################
+					open_connections() # Open Connections
 					time.sleep(sleep_time)
-					
 				elif security_functions.get_command(encrypted_command) == 'exit':
-					# Exit Cleanup
-					#
-					##############
-					exit()
+					cleanup_and_exit() # Cleanup and Exit!
 				else:
 					raise Exception('Command not recognized')
 	except Exception as exception:
 		print type(exception)
 		print exception.args
-		# Exit Cleanup
-		#
-		##############
-		exit()
+		cleanup_and_exit() # Cleanup and Exit!
+		
+def close_connections():
+	pass
+def open_connections():
+	pass
+def cleanup_and_exit():
+	# Need to write cleanup code
+	#
+	##############
+	exit()
