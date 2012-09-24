@@ -7,8 +7,14 @@
 # 
 ##################
 
-def key_check(key):
+def key_check(input_data):
 	#
 	#	Gotta write this part!
 	#
-	return(key == 'secret key!')
+	return(input_data.split()[0] == 'secretKey!')
+	
+def get_command(input_data):
+	#
+	#	Gotta write this part!
+	#
+	return(input_data.split()[1])
