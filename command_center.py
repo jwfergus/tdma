@@ -1,35 +1,38 @@
 #!/usr/bin/python
 
 ##################
-# client for testing
-# v0.1
+# Command center
+#  Issues commands to nodes.
+# v0.2
 # author: Joshua Ferguson <jwfergus@asu.edu>
 # 
 ##################
 
+import time
 import socket
-from time import sleep
+import Queue
+import TCP_handler_functions
+import threading
+import sys
+
 
 ip = '127.0.0.1'
 port = 4242
 buffer_size = 1024
-key = 'secret key!'
-message = 'open connections'
+key = 'secretKey!'
+
+number_list = (1,2,3,4,5)
+for number in number_list:
+	local_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	local_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+	local_socket.connect((ip,port))
+	local_socket.send('secret key! #' + str(number))
+	time.sleep(.5)
+	print '_test_TCP found in queue: ', queue.get()
+	local_socket.close()
+	
 
 local_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 local_socket.connect((ip,port))
-
-local_socket.send('secret key!')
-sleep(1.1)
-local_socket.send('open connections')
-sleep(1.1)
-local_socket.send('secret key!')
-sleep(1.1)
-local_socket.send('open connections')
-sleep(1.1)
-local_socket.send('secret key!')
-sleep(1.1)
-local_socket.send('exit')
-local_socket.close()
-
-print 'Central_Command - Script complete: exiting'
+local_socket.send('system exit')
+sys.exit()
