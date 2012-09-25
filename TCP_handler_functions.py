@@ -13,29 +13,25 @@ import sys
 
 def TCP_handler(queue, ip, port, buffer_size):
 	if __debug__:
-		print 'Inside TCP_handler thread'	
+		print 'TCP_handler thread - Inside TCP_handler thread'	
 	local_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	local_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 	local_socket.bind((ip,port))
 	local_socket.listen(1)	
 	while True:
 		if __debug__:
-			print 'TCP_handler thread waiting for connection . . .'
+			print 'TCP_handler thread - waiting for connection . . .'
 		remote_connection, remote_address = local_socket.accept()
 		if __debug__:
-			print 'TCP_handler thread connection FOUND!'
+			print 'TCP_handler thread - connection FOUND!'
 		
 		while True:
 			command = remote_connection.recv(buffer_size)
 			if not command:
 				break
-			if __debug__:
-				if command == 'system exit':
-					print 'found system exit command'
-					sys.exit()
 			queue.put(command)
 			if __debug__:
-				print 'TCP_handler command received: ', command
+				print 'TCP_handler thread - command received: ', command
 		remote_connection.close()
 		
 
