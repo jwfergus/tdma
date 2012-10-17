@@ -39,7 +39,7 @@ struct nfq_handle *nfqHandle;
 struct nfq_q_handle *myQueue;
 struct nfnl_handle *netlinkHandle;
 
-double max_time = 5;
+double max_time;
 
 int fd, res;
 char buf[4096];
@@ -138,8 +138,9 @@ void signal_handler(int signal_num) {
   // end signal_handler
 }
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
+max_time = atof(argv[1]);
 signal(SIGUSR1, signal_handler);
 
 
