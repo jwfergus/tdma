@@ -31,7 +31,7 @@ def execute():
 		local_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		local_socket.connect((ip,port))
 		local_socket.send(key +' open')
-		time.sleep(2.5)
+		time.sleep(7)
 		local_socket.close()
 	
 
