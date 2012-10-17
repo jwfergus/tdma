@@ -9,7 +9,7 @@
 ##################
 import os
 
-def initialize:
+def initialize():
 	#
 	#	
 	#
