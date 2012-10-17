@@ -2,7 +2,7 @@
 
 ##################
 # Initial MEL-node-server
-# v0.2
+# v0.3
 # author: Joshua Ferguson <jwfergus@asu.edu>
 # 
 ##################
@@ -15,6 +15,9 @@ import threading
 import Queue
 import TCP_handler_functions
 import os
+import netfilter_functions
+from subprocess import Popen, PIPE
+
 
 def execute():
 	# Communication Variables
@@ -23,7 +26,7 @@ def execute():
 	buffer_size = 1024
 
 	# Logic Variables
-	sleep_time = .990 #should be adjusted based on clock speed
+	open_connection_time = 2 #should be adjusted based on clock speed
 	exit_message_received = False # Program exit command flag
 	open_connect = False # flag signifying open connections state
 	command_queue = Queue.Queue(0)
@@ -33,14 +36,14 @@ def execute():
 	TCP_handler_thread = threading.Thread(target=TCP_handler_functions.TCP_handler, args=(command_queue, ip, port, buffer_size))
 	TCP_handler_thread.start()
 	time.sleep(0.5)
-
+	
+	# Initialize and start packet submodule
+	add_ICMP_to_queue_redirect()
+	process = Popen(['./packet_queuing_submodule', '3'], stdout=PIPE, stderr=PIPE)
 
 
 	while True:
 		try:
-			if __debug__:
-				print 'Node.py - CLOSE CONNECTIONS'
-			close_connections() # Close Connections
 			open_connect = False
 			while not open_connect:
 				if __debug__:
@@ -55,7 +58,7 @@ def execute():
 							print 'Node.py - OPEN CONNECTIONS'
 						open_connect = True
 						open_connections() # Open Connections
-						time.sleep(sleep_time)
+						time.sleep(open_connection_time)
 					elif security_functions.get_command(encrypted_command) == 'exit':
 						if __debug__:
 							print 'Node.py - Exit command found'
@@ -67,13 +70,12 @@ def execute():
 			print exception.args
 			cleanup_and_exit() # Cleanup and Exit!
 		
-def close_connections():
-	os.system('iptables -A INPUT -p icmp -j DROP')
 def open_connections():
-	os.system('iptables -D INPUT -p icmp -j DROP')
+	call(["kill", "-s", "SIGUSR1", str(process.pid)])
 def cleanup_and_exit():
 	# Need to write cleanup code
 	#
 	##############
-	os.system('iptables -D INPUT -p icmp -j DROP')
+	call(["kill", "-9", str(process.pid)])
+	del_ICMP_to_queue_redirect()
 	exit()
