@@ -16,7 +16,8 @@ import Queue
 import TCP_handler_functions
 import os
 import netfilter_functions
-from subprocess import Popen, PIPE
+from subprocess import Popen, call, PIPE
+
 
 
 def execute():
@@ -33,13 +34,14 @@ def execute():
 
 
 	# Start TCP handler to begin receiving commands which are added to the command queue
-	TCP_handler_thread = threading.Thread(target=TCP_handler_functions.TCP_handler, args=(command_queue, ip, port, buffer_size))
+	TCP_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	TCP_handler_thread = threading.Thread(target=TCP_handler_functions.TCP_handler, args=(TCP_socket, command_queue, ip, port, buffer_size))
 	TCP_handler_thread.start()
 	time.sleep(0.5)
 	
 	# Initialize and start packet submodule
-	add_ICMP_to_queue_redirect()
-	process = Popen(['./packet_queuing_submodule', '3'], stdout=PIPE, stderr=PIPE)
+	netfilter_queue_process = Popen(['/home/joshua/Desktop/mutual-exclusion-logic/packet_queuing_submodule', '3'], stdout=PIPE, stderr=PIPE)
+	netfilter_functions.add_ICMP_to_queue_redirect()
 
 
 	while True:
@@ -57,25 +59,26 @@ def execute():
 							print 'Node.py - Open command found'
 							print 'Node.py - OPEN CONNECTIONS'
 						open_connect = True
-						open_connections() # Open Connections
+						open_connections(netfilter_queue_process.pid) # Open Connections
 						time.sleep(open_connection_time)
 					elif security_functions.get_command(encrypted_command) == 'exit':
 						if __debug__:
 							print 'Node.py - Exit command found'
-						cleanup_and_exit() # Cleanup and Exit!
+						cleanup_and_exit(TCP_socket, netfilter_queue_process.pid) # Cleanup and Exit!
 					else:
 						raise Exception('Command not recognized')
 		except Exception as exception:
 			print type(exception)
 			print exception.args
-			cleanup_and_exit() # Cleanup and Exit!
+			cleanup_and_exit(TCP_socket, netfilter_queue_process.pid) # Cleanup and Exit!
 		
-def open_connections():
-	call(["kill", "-s", "SIGUSR1", str(process.pid)])
-def cleanup_and_exit():
+def open_connections(pid):
+	call(["kill", "-s", "SIGUSR1", str(pid)])
+def cleanup_and_exit(TCP_socket, Queue_pid):
 	# Need to write cleanup code
 	#
-	##############
-	call(["kill", "-9", str(process.pid)])
-	del_ICMP_to_queue_redirect()
+	##############	
+	TCP_socket.close()
+	call(["kill", "-9", str(Queue_pid)])
+	netfilter_functions.delete_ICMP_to_queue_redirect()
 	exit()
