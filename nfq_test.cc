@@ -22,6 +22,10 @@
 #include <iomanip>
 #include <time.h>
 #include <cstdlib>
+#include <stdio.h>
+#include <unistd.h>
+#include <signal.h>
+#include <time.h>
 
 #include <netinet/in.h>
 extern "C" {
@@ -30,7 +34,15 @@ extern "C" {
 }
 
 using namespace std;
+struct nfq_handle *nfqHandle;
 
+struct nfq_q_handle *myQueue;
+struct nfnl_handle *netlinkHandle;
+
+double max_time = 5;
+
+int fd, res;
+char buf[4096];
 //----------------------------------------------------------------------
 //------------------------------------------------------
 static int Callback(nfq_q_handle *myQueue, struct nfgenmsg *msg, nfq_data *pkt, void *cbData) {
@@ -99,14 +111,37 @@ static int Callback(nfq_q_handle *myQueue, struct nfgenmsg *msg, nfq_data *pkt, 
 
 //----------------------------------------------------------------------
 //------------------------------------------------------
-int main(int argc, char **argv) {
-  struct nfq_handle *nfqHandle;
+void signal_handler(int signal_num) {
+  signal(SIGUSR1, signal_handler);
+  printf("SIGUSR1 FOUND!\n");
+  time_t start_time, current_time_diff;
+  start_time = time(NULL);
+  current_time_diff = time(NULL) - start_time;
+  printf("current_time_diff = %g \n", (double)current_time_diff);  
+  printf("exit flag from loop: %g \n", (double)(((double)current_time_diff) < max_time));
+  while ((res = recv(fd, buf, sizeof(buf), 0)) && res >= 0) {
+    printf("inside loop \n");
+ 
+    // I am not totally sure why a callback mechanism is used
+    // rather than just handling it directly here, but that
+    // seems to be the convention...
+    nfq_handle_packet(nfqHandle, buf, res);
+    // end while receiving traffic
+    current_time_diff = time(NULL) - start_time;
+    if(((double)current_time_diff) >= max_time) {
+        break;
+    } 
+  }
+  printf("Done looping through packets");
+  return;
 
-  struct nfq_q_handle *myQueue;
-  struct nfnl_handle *netlinkHandle;
+  // end signal_handler
+}
 
-  int fd, res;
-  char buf[4096];
+int main(int argc, char **argv)
+{
+signal(SIGUSR1, signal_handler);
+
 
   // Get a queue connection handle from the module
   if (!(nfqHandle = nfq_open())) {
@@ -142,19 +177,12 @@ int main(int argc, char **argv) {
   netlinkHandle = nfq_nfnlh(nfqHandle);
   fd = nfnl_fd(netlinkHandle);
 
-  while ((res = recv(fd, buf, sizeof(buf), 0)) && res >= 0) {
-    // I am not totally sure why a callback mechanism is used
-    // rather than just handling it directly here, but that
-    // seems to be the convention...
-    nfq_handle_packet(nfqHandle, buf, res);
-    // end while receiving traffic
-  }
+while (1)
+sleep(3600);
 
   nfq_destroy_queue(myQueue);
 
   nfq_close(nfqHandle);
 
-  return 0;
-
-  // end main
+return 0;
 }

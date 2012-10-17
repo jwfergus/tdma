@@ -4,7 +4,8 @@ mutual-exclusion-logic
 Implementing mutual exclusion of network 
 
 To compile NF_Q,
-install libnetfilter-queue-dev, make sure to insert the iptable_filter and ip_queue modules
+install libnetfilter-queue-dev, make sure to insert the iptable_filter module
+g++ -o nfq_test nfq_test.cc -lnetfilter_queue
 
 Still todo
 
