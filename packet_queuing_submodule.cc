@@ -53,7 +53,9 @@ static int Callback(nfq_q_handle *myQueue, struct nfgenmsg *msg, nfq_data *pkt, 
 
   if ((header = nfq_get_msg_packet_hdr(pkt))) {
     id = ntohl(header->packet_id);
-    cout << "id " << id << "; hw_protocol " << setfill('0') << setw(4) <<
+    cout << "id " << id << ";"; 
+    }
+/** hw_protocol " << setfill('0') << setw(4) <<
       hex << ntohs(header->hw_protocol) << "; hook " << ('0'+header->hook)
          << " ; ";
   }
@@ -76,7 +78,7 @@ static int Callback(nfq_q_handle *myQueue, struct nfgenmsg *msg, nfq_data *pkt, 
   } else {
     cout << "; no tstamp";
   }
-/**
+
   cout << "; mark " << nfq_get_nfmark(pkt);
 
   // Note that you can also get the physical devices
@@ -117,10 +119,8 @@ void signal_handler(int signal_num) {
   time_t start_time, current_time_diff;
   start_time = time(NULL);
   current_time_diff = time(NULL) - start_time;
-  printf("current_time_diff = %g \n", (double)current_time_diff);  
-  printf("exit flag from loop: %g \n", (double)(((double)current_time_diff) < max_time));
   while ((res = recv(fd, buf, sizeof(buf), 0)) && res >= 0) {
-    printf("inside loop \n");
+
  
     // I am not totally sure why a callback mechanism is used
     // rather than just handling it directly here, but that
@@ -132,7 +132,6 @@ void signal_handler(int signal_num) {
         break;
     } 
   }
-  printf("Done looping through packets");
   return;
 
   // end signal_handler
