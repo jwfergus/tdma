@@ -3,10 +3,11 @@ mutual-exclusion-logic
 
 Implementing mutual exclusion of network 
 
-To compile NF_Q,
-install libnetfilter-queue-dev, make sure to insert the iptable_filter module
-issue make command
-
+To run:
+install libnetfilter-queue-dev
+make sure to insert the iptable_filter module
+$make
+$sudo python demonstration_main.py
 
 
 
