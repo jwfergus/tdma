@@ -80,10 +80,19 @@ def execute():
 def open_connections(pid):
 	call(["kill", "-s", "SIGUSR1", str(pid)])
 def cleanup_and_exit(TCP_socket, Queue_pid):
-	# Need to write cleanup code
-	#
-	##############	
-	TCP_socket.close()
+	
+	#Kills TCP socket, causing TCP handler thread to exit
+	TCP_socket.close() 
+	
+	#Kills packet_queuing_submodule process
+	#	This call is done /before/ the redirect is removed from
+	#	iptables to ensure no packets are accidentally sent out over the
+	#	network
 	call(["kill", "-9", str(Queue_pid)])
+	
+	#Removes ICMP redirect from iptables
 	netfilter_functions.delete_ICMP_to_queue_redirect()
 	exit()
+	
+	
+	
