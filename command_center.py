@@ -15,6 +15,10 @@ import TCP_handler_functions
 import threading
 import sys
 
+##################
+# Currently just a hardcoded, evenly time divided schedule based on the 
+#	'number_list' variable
+##################
 def execute():
 	time.sleep(2.5)
 	ip = '127.0.0.1'
@@ -25,6 +29,8 @@ def execute():
 	number_list = (1,2)
 	for number in number_list:
 	
+		# Creates and opens socket to IP and issues secret key + open 
+		#	command
 		if __debug__:
 			print 'command_center.py - opening connection'
 		local_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
