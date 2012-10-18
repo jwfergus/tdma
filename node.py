@@ -16,6 +16,7 @@ import Queue
 import TCP_handler_functions
 import os
 import netfilter_functions
+import bash_gui_functions
 from subprocess import Popen, call, PIPE
 
 
@@ -40,7 +41,7 @@ def execute():
 	time.sleep(0.5)
 	
 	# Initialize and start packet submodule
-	netfilter_queue_process = Popen([os.getcwd()+'/packet_queuing_submodule', '3'], stdout=PIPE, stderr=PIPE)
+	netfilter_queue_process = Popen([os.getcwd()+'/packet_queuing_submodule', str(open_connection_time)], stdout=PIPE, stderr=PIPE)
 	netfilter_functions.add_ICMP_to_queue_redirect()
 
 
@@ -50,6 +51,8 @@ def execute():
 			while not open_connect:
 				if __debug__:
 					print 'Node.py - Blocking for command from queue'
+				else:
+					bash_gui_functions.print_overwrite_with_color("CLOSED", "red")
 				encrypted_command = command_queue.get(True) # block for queue command
 				if __debug__:
 					print 'Node.py - Command pulled from queue'
@@ -58,6 +61,8 @@ def execute():
 						if __debug__:
 							print 'Node.py - Open command found'
 							print 'Node.py - OPEN CONNECTIONS'
+						else:
+							bash_gui_functions.print_overwrite_with_color("OPEN", "green")
 						open_connect = True
 						open_connections(netfilter_queue_process.pid) # Open Connections
 						time.sleep(open_connection_time)
