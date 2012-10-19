@@ -26,7 +26,7 @@ def execute():
 	buffer_size = 1024
 	key = 'secretKey!'
 
-	number_list = (1,2)
+	number_list = (1,2,3,4,5,6,7)
 	for number in number_list:
 	
 		# Creates and opens socket to IP and issues secret key + open 
@@ -37,7 +37,7 @@ def execute():
 		local_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		local_socket.connect((ip,port))
 		local_socket.send(key +' open')
-		time.sleep(7)
+		time.sleep(4)
 		local_socket.close()
 	
 
