@@ -79,8 +79,9 @@ def execute(assigned_ip, assigned_open_connection_time):
 			cleanup_and_exit(TCP_socket, netfilter_queue_process.pid) # Cleanup and Exit!
 		
 def open_connections(pid):
-	call(["kill", "-s", "SIGUSR1", str(pid)])
 	os.system('iptables -D INPUT -p icmp -j DROP')
+	call(["kill", "-s", "SIGUSR1", str(pid)])
+
 def close_connections():
 	os.system('iptables -A INPUT -p icmp -j DROP')
 	
