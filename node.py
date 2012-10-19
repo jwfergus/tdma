@@ -21,14 +21,14 @@ from subprocess import Popen, call, PIPE
 
 
 
-def execute(assigned_ip):
+def execute(assigned_ip, assigned_open_connection_time):
 	# Communication Variables
 	ip = assigned_ip
 	port = 4242
 	buffer_size = 1024
 
 	# Logic Variables
-	open_connection_time = 2 #should be adjusted based on clock speed
+	open_connection_time = assigned_open_connection_time #should be adjusted based on clock speed
 	exit_message_received = False # Program exit command flag
 	open_connect = False # flag signifying open connections state
 	command_queue = Queue.Queue(0)
