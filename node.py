@@ -80,6 +80,7 @@ def execute(assigned_ip, assigned_open_connection_time):
 		
 def open_connections(pid):
 	os.system('iptables -D INPUT -p icmp -j DROP')
+	time.sleep(.1)
 	call(["kill", "-s", "SIGUSR1", str(pid)])
 
 def close_connections():
