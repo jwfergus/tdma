@@ -13,7 +13,7 @@ import command_center
 import node
 import threading
 
-Node_thread = threading.Thread(target=node.execute)
+Node_thread = threading.Thread(target=node.execute("192.168.1.101"))
 Node_thread.start()
 time.sleep(0.5)
 

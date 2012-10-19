@@ -21,9 +21,9 @@ from subprocess import Popen, call, PIPE
 
 
 
-def execute():
+def execute(assigned_ip):
 	# Communication Variables
-	ip = '127.0.0.1'
+	ip = assigned_ip
 	port = 4242
 	buffer_size = 1024
 
