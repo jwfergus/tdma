@@ -21,7 +21,7 @@ import sys
 ##################
 def execute():
 	time.sleep(2.5)
-	ip = '127.0.0.1'
+	ip = '192.168.1.101'
 	port = 4242
 	buffer_size = 1024
 	key = 'secretKey!'
