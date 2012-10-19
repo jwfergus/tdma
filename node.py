@@ -66,6 +66,7 @@ def execute(assigned_ip, assigned_open_connection_time):
 						open_connect = True
 						open_connections(netfilter_queue_process.pid) # Open Connections
 						time.sleep(open_connection_time)
+						close_connections()
 					elif security_functions.get_command(encrypted_command) == 'exit':
 						if __debug__:
 							print 'Node.py - Exit command found'
@@ -79,6 +80,10 @@ def execute(assigned_ip, assigned_open_connection_time):
 		
 def open_connections(pid):
 	call(["kill", "-s", "SIGUSR1", str(pid)])
+	os.system('iptables -D INPUT -p icmp -j DROP')
+def close_connections():
+	os.system('iptables -A INPUT -p icmp -j DROP')
+	
 def cleanup_and_exit(TCP_socket, Queue_pid):
 	
 	#Kills TCP socket, causing TCP handler thread to exit
