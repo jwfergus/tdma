@@ -65,7 +65,7 @@ def execute(assigned_ip, assigned_open_connection_time):
 							bash_gui_functions.print_overwrite_with_color("OPEN", "green")
 						open_connect = True
 						open_connections(netfilter_queue_process.pid) # Open Connections
-						time.sleep(open_connection_time)
+						time.sleep((open_connection_time + .2))
 						close_connections()
 					elif security_functions.get_command(encrypted_command) == 'exit':
 						if __debug__:
