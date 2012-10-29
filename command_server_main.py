@@ -9,7 +9,7 @@
 ##################
 
 import time
-import command_center
+from command_server import *
 import node
 import threading
 

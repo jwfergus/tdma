@@ -8,16 +8,14 @@
 ##################
 
 import socket
-import security_functions
 import time
-from sys import exit
 import threading
 import Queue
-import TCP_handler_functions
 import os
-import netfilter_functions
-import bash_gui_functions
 from subprocess import Popen, call, PIPE
+from sys import exit
+
+from node import *
 
 
 

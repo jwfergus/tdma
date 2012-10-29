@@ -4,7 +4,7 @@
 # Randomized Ping Application
 # v0.1
 # author: Joshua Ferguson <jwfergus@asu.edu>
-# 
+# 	Call ping_application( # of iterations, seconds per iteration)
 ##################
 
 import random
