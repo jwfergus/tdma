@@ -5,7 +5,7 @@
 # v0.1
 # author: Joshua Ferguson <jwfergus@asu.edu>
 # 
-# Script for testing updating demonstration repos
+# Script for killing node processes and flushing iptables
 ##################
 
 
@@ -15,7 +15,7 @@ set pass "CBCT1305"
 
 # Get IP address as input
 set input_ip $argv
-set timeout 5
+set timeout 10
 
 # spawn the scp thread
 spawn ssh mel@$input_ip
@@ -27,11 +27,7 @@ send "$pass\r"
 expect "$ "
 send "sudo -k\r"
 expect "$ "
-send "sudo rm -r mutual-exclusion-logic\r"
+send "sudo perl mutual-exclusion-logic/demonstration/kill_and_flush.pl\r"
 expect "mel:"
 send "$pass\r" 
 expect "$ "
-send "git clone git@impact.asu.edu:mutual-exclusion-logic.git\r"
-expect "$ "
-
-
