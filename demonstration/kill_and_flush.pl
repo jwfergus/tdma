@@ -8,6 +8,6 @@
 # Done in perl since python script would kill itself
 ##################
 
-system("killall -9 python")
-system("killall packet_queuing_submodule")
-system("iptables --flush")
+system("killall -9 python");
+system("killall packet_queuing_submodule");
+system("iptables --flush");
