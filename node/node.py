@@ -15,7 +15,9 @@ import os
 from subprocess import Popen, call, PIPE
 from sys import exit
 
-from node import *
+import netfilter_functions
+import TCP_handler_functions
+import security_functions
 
 
 
@@ -39,7 +41,7 @@ def execute(assigned_ip, assigned_open_connection_time):
 	time.sleep(0.5)
 	
 	# Initialize and start packet submodule
-	netfilter_queue_process = Popen([os.getcwd()+'/packet_queuing_submodule', str(open_connection_time)], stdout=PIPE, stderr=PIPE)
+	netfilter_queue_process = Popen([os.getcwd()+'/node/packet_queuing_submodule', str(open_connection_time)], stdout=PIPE, stderr=PIPE)
 	netfilter_functions.add_ICMP_to_queue_redirect()
 
 
