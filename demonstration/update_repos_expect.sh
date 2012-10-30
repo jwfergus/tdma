@@ -26,16 +26,13 @@ expect "password:"
 send "$pass\r" 
 
 sleep 1
+send "sudo -k\r"
+expect "$"
 send "sudo rm -r mutual-exclusion-logic\r"
-expect {
-	"mel:" {
-		send "$pass\r" 
-	}
-
-	"$ " 
-}
-sleep 1
+expect "mel:"
+send "$pass\r" 
+expect "$"
 send "git clone git@impact.asu.edu:mutual-exclusion-logic.git\r"
-sleep 1
+sleep 2
 
 
