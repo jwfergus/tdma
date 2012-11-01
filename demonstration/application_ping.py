@@ -37,13 +37,13 @@ time.sleep(1)
 iterations = int(sys.argv[1])
 window_size = int(sys.argv[2])
 assigned_ip = commands.getoutput("ifconfig | grep 'inet addr:192.' | awk '{split($2,a,\":\");print a[2]}'")
-if(assigned_ip == "192.168.1.101")
+if(assigned_ip == "192.168.1.101"):
 	target_ip = "192.168.1.102"
-elif(assigned_ip == "192.168.1.102")
+elif(assigned_ip == "192.168.1.102"):
 	target_ip = "192.168.1.101"
-elif(assigned_ip == "192.168.1.103")
+elif(assigned_ip == "192.168.1.103"):
 	target_ip = "192.168.1.104"
-elif(assigned_ip == "192.168.1.104")
+elif(assigned_ip == "192.168.1.104"):
 	target_ip = "192.168.1.103"
 	
 
