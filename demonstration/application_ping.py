@@ -12,6 +12,7 @@ import os
 import threading
 import time
 import sys
+import commands
 
 def ping(ip_address, count):
 	interval = "0." + str(random_number_generator.randint(3,9))
