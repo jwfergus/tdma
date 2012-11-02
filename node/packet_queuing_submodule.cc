@@ -137,6 +137,7 @@ void signal_handler(int signal_num) {
   // end signal_handler
 }
 
+
 int main(int argc, char *argv[])
 {
 max_time = atof(argv[1]);
