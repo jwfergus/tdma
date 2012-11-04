@@ -60,6 +60,7 @@ static int Callback(nfq_q_handle *myQueue, struct nfgenmsg *msg, nfq_data *pkt, 
 
   
   cout << endl;
+  current_time_diff = time(NULL) - start_time;
   if(((double)current_time_diff) >= max_time) {
         return nfq_set_verdict(myQueue, id, NF_QUEUE, 0, NULL);
   } 
@@ -80,7 +81,7 @@ void signal_handler(int signal_num) {
     // I am not totally sure why a callback mechanism is used
     // rather than just handling it directly here, but that
     // seems to be the convention...
-    current_time_diff = time(NULL) - start_time;
+    
     nfq_handle_packet(nfqHandle, buf, res);
 
     // end while receiving traffic
