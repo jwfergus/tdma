@@ -55,54 +55,7 @@ static int Callback(nfq_q_handle *myQueue, struct nfgenmsg *msg, nfq_data *pkt, 
     id = ntohl(header->packet_id);
     cout << "id " << id << ";"; 
     }
-/** hw_protocol " << setfill('0') << setw(4) <<
-      hex << ntohs(header->hw_protocol) << "; hook " << ('0'+header->hook)
-         << " ; ";
-  }
 
-  // The HW address is only fetchable at certain hook points
-  nfqnl_msg_packet_hw *macAddr = nfq_get_packet_hw(pkt);
-  if (macAddr) {
-    cout << "mac len " << ntohs(macAddr->hw_addrlen) << " addr ";
-    for (int i = 0; i < 8; i++) {
-      cout << setfill('0') << setw(2) << hex << macAddr->hw_addr;
-    }
-    // end if macAddr
-  } else {
-    cout << "no MAC addr";
-  }
-
-  timeval tv;
-  if (!nfq_get_timestamp(pkt, &tv)) {
-    cout << "; tstamp " << tv.tv_sec << "." << tv.tv_usec;
-  } else {
-    cout << "; no tstamp";
-  }
-
-  cout << "; mark " << nfq_get_nfmark(pkt);
-
-  // Note that you can also get the physical devices
-  cout << "; indev " << nfq_get_indev(pkt);
-  cout << "; outdev " << nfq_get_outdev(pkt);
-
-  cout << endl;
-
-  // Print the payload; in copy meta mode, only headers will be included;
-  // in copy packet mode, whole packet will be returned.
-  char *pktData;
-  int len = nfq_get_payload(pkt, &pktData);
-  if (len) {
-    cout << "data[" << len << "]: '";
-    for (int i = 0; i < len; i++) {
-      if (isprint(pktData[i]))
-        cout << pktData[i];
-      else cout << " ";
-    }
-    cout << "'" << endl;
-    // end data found
-  }
-**/
-  // For this program we'll always accept the packet...
   
   cout << endl;
   
@@ -120,17 +73,29 @@ void signal_handler(int signal_num) {
   start_time = time(NULL);
   current_time_diff = time(NULL) - start_time;
   while ((res = recv(fd, buf, sizeof(buf), 0)) && res >= 0) {
-
  
     // I am not totally sure why a callback mechanism is used
     // rather than just handling it directly here, but that
     // seems to be the convention...
-    nfq_handle_packet(nfqHandle, buf, res);
+
     // end while receiving traffic
     current_time_diff = time(NULL) - start_time;
     if(((double)current_time_diff) >= max_time) {
+
+        uint32_t id = 0;
+        nfqnl_msg_packet_hdr *header;
+
+
+        if ((header = nfq_get_msg_packet_hdr(pkt))) {
+        id = ntohl(header->packet_id);
+        }
+
+        nfq_set_verdict(nfqHandle, id, NF_REPEAT, 0, NULL);
         break;
-    } 
+
+    } else {
+        nfq_handle_packet(nfqHandle, buf, res);
+    }
   }
   return;
 
