@@ -61,7 +61,7 @@ static int Callback(nfq_q_handle *myQueue, struct nfgenmsg *msg, nfq_data *pkt, 
   
   cout << endl;
   if(((double)current_time_diff) >= max_time) {
-        return nfq_set_verdict(myQueue, id, NF_REPEAT, 0, NULL);
+        return nfq_set_verdict(myQueue, id, NF_QUEUE, 0, NULL);
   } 
   return nfq_set_verdict(myQueue, id, NF_ACCEPT, 0, NULL);
 
