@@ -75,7 +75,6 @@ void signal_handler(int signal_num) {
   signal(SIGUSR1, signal_handler);
   printf("SIGUSR1 FOUND!\n");
   start_time = time(NULL);
-  current_time_diff = time(NULL) - start_time;
   while ((res = recv(fd, buf, sizeof(buf), 0)) && res >= 0) {
  
     // I am not totally sure why a callback mechanism is used
