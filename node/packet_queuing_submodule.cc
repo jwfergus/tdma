@@ -62,8 +62,10 @@ static int Callback(nfq_q_handle *myQueue, struct nfgenmsg *msg, nfq_data *pkt, 
   cout << endl;
   current_time_diff = time(NULL) - start_time;
   if(((double)current_time_diff) >= max_time) {
+        printf("Inside CallBack > Verdict_Repeat\n");
         return nfq_set_verdict(myQueue, id, NF_REPEAT, 0, NULL);
   } 
+        printf("Inside CallBack > Verdict_Accept\n");
   return nfq_set_verdict(myQueue, id, NF_ACCEPT, 0, NULL);
 
   // end Callback
@@ -80,11 +82,14 @@ void signal_handler(int signal_num) {
     // I am not totally sure why a callback mechanism is used
     // rather than just handling it directly here, but that
     // seems to be the convention...
+        printf("Inside While before nfq_handle_packet\n");
     
     nfq_handle_packet(nfqHandle, buf, res);
 
     // end while receiving traffic
     if(((double)current_time_diff) >= max_time) {
+        printf("Inside While > TimeDiffBreak\n");
+
         break;
     } 
   }
