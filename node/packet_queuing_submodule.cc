@@ -43,7 +43,8 @@ double max_time;
 
 int fd, res;
 char buf[4096];
-time_t start_time, current_time_diff;
+time_t start_time, current_time_diff, current_time;
+char* time_string_to_print;
 
 //----------------------------------------------------------------------
 //------------------------------------------------------
@@ -62,10 +63,14 @@ static int Callback(nfq_q_handle *myQueue, struct nfgenmsg *msg, nfq_data *pkt, 
   cout << endl;
   current_time_diff = time(NULL) - start_time;
   if(((double)current_time_diff) >= max_time) {
-        cout <<"Inside CallBack > Verdict_Repeat" << endl;
+        current_time = time(NULL);
+        time_string_to_print = ctime(&current_time);
+        cout <<"Inside CallBack > Verdict_Repeat. Time = " << time_string_to_print << endl;
         return nfq_set_verdict(myQueue, id, NF_REPEAT, 0, NULL);
   } 
-        cout <<"Inside CallBack > Verdict_Accept" << endl;
+        current_time = time(NULL);
+        time_string_to_print = ctime(&current_time);
+        cout <<"Inside CallBack > Verdict_Accept. Time = " << time_string_to_print<< endl;
   return nfq_set_verdict(myQueue, id, NF_ACCEPT, 0, NULL);
 
   // end Callback
@@ -76,19 +81,26 @@ static int Callback(nfq_q_handle *myQueue, struct nfgenmsg *msg, nfq_data *pkt, 
 void signal_handler(int signal_num) {
   signal(SIGUSR1, signal_handler);
   printf("SIGUSR1 FOUND!\n");
+        current_time = time(NULL);
+        time_string_to_print = ctime(&current_time);
+        cout <<"Inside SIGUSR1, before WHILE. Time = " << time_string_to_print<< endl;
   start_time = time(NULL);
   while ((res = recv(fd, buf, sizeof(buf), 0)) && res >= 0) {
  
     // I am not totally sure why a callback mechanism is used
     // rather than just handling it directly here, but that
     // seems to be the convention...
-        cout <<"Inside While before nfq_handle_packet" << endl;
+        current_time = time(NULL);
+        time_string_to_print = ctime(&current_time);
+        cout <<"Inside While before nfq_handle_packet. Time = " << time_string_to_print<< endl;
     
     nfq_handle_packet(nfqHandle, buf, res);
 
     // end while receiving traffic
     if(((double)current_time_diff) >= max_time) {
-        cout <<"Inside While > TimeDiffBreak" << endl;
+        current_time = time(NULL);
+        time_string_to_print = ctime(&current_time);
+        cout <<"Inside While > TimeDiffBreak. Time = " << time_string_to_print<< endl;
 
         break;
     } 
