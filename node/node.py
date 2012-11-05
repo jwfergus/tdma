@@ -102,5 +102,7 @@ def cleanup_and_exit(TCP_socket, Queue_pid):
 	netfilter_functions.delete_ICMP_to_queue_redirect()
 	exit()
 	
+if __name__ == "__main__":
+	execute('127.0.0.1', 3)
 	
 	
