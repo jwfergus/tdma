@@ -41,7 +41,7 @@ def execute(assigned_ip, assigned_open_connection_time):
 	time.sleep(0.5)
 	
 	# Initialize and start packet submodule
-	queue_output_file = open('/node/queue_output', 'w')
+	queue_output_file = open(os.getcwd()'/node/queue_output', 'w')
 	netfilter_queue_process = Popen([os.getcwd()+'/node/packet_queuing_submodule', str(open_connection_time)], stdout=queue_output_file, stderr=PIPE)
 	netfilter_functions.add_ICMP_to_queue_redirect()
 
