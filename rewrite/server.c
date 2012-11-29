@@ -2,13 +2,13 @@
 #include<string.h>	//strlen
 #include<sys/socket.h>
 #include<arpa/inet.h>	//inet_addr
-#include<unistd.h>	//write
+#include<unistd.h>	//write / time
 
 int main(int argc , char *argv[])
 {
 	int socket_desc , new_socket , c;
 	struct sockaddr_in server , client;
-	char inc_message[2000];
+	char inc_message[2000], *message;
 	
 	//Create socket
 	socket_desc = socket(AF_INET , SOCK_STREAM , 0);
@@ -45,16 +45,34 @@ int main(int argc , char *argv[])
 
 	puts("Connected");
 
+	int count = 1;
 	int recv_return;
-	int count = 0;
-	while(recv_return =read(new_socket, inc_message , sizeof(inc_message)) && recv_return >= 0){
-		printf("recv_return = %d\n",recv_return);
+	while(count <=5)
+	{
+		//Read some data
+		if( recv_return =read(new_socket, inc_message , sizeof(inc_message)) && recv_return < 0)
+		{
+			//FAILURE
+			printf("\n**Read Failed**\nrecv_return: %d", recv_return);
+			fflush(stdout);
+			return 1;
+		}
+		printf("\n**Data Rcvd**\nmessage = %scount = %d\n",inc_message, count);
+		fflush(stdout);
+		sleep(2);
+
+		message = "HELLO SOCKET_WORLD \n\r";
+		if( send(new_socket , message , strlen(message) , 0) < 0)
+		{
+			//FAILURE
+			printf("\n**Send Failed**\nCur Message: %s", message);
+			fflush(stdout);
+			return 1;
+		}
+		printf("\n**Data Sent**\ncount = %d\n",count);
 		fflush(stdout);
 		count++;
-		if(count >=5)
-		{
-			break;
-		}
+		
 	}
 	printf("after while loop, last message was: %s, recv_return was: %d", inc_message, recv_return);
 	

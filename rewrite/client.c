@@ -32,19 +32,32 @@ int main(int argc , char *argv[])
 	
 
 	int count = 1;
+	int recv_return;
 	while(count <=5)
 	{
 		//Send some data
 		message = "HELLO SOCKET_WORLD \n\r";
 		if( send(socket_desc , message , strlen(message) , 0) < 0)
 		{
-			puts("Send failed");
+			//FAILURE
+			printf("\n**Send Failed**\nCur Message: %s", message);
+			fflush(stdout);
 			return 1;
 		}
-		printf("Data Sent, count = %d\n",count);
+		printf("\n**Data Sent**\ncount = %d\n",count);
+		fflush(stdout);
+		
+		if((recv_return = read(socket_desc, server_reply, sizeof(server_reply))) && recv_return < 0)
+		{
+			//FAILURE
+			printf("\n**Read Failed**\nrecv_return: %d", recv_return);
+			fflush(stdout);
+			return 1;
+		}
+		printf("\n**Data Rcvd**\nserver_reply = %s, count = %d\n",server_reply, count);
 		fflush(stdout);
 		count++;
-		sleep(2);
+		
 	}
 	
 	return 0;
