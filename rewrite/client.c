@@ -1,3 +1,17 @@
+/**
+ * @file
+ * @author  Joshua Ferguson <jwfergus@asu.edu>
+ * @version 1.0
+ *
+ * @section LICENSE
+ *
+ * Copyright Joshua W. Ferguson 2012
+ *
+ * @section DESCRIPTION
+ *
+ * Initial implementation of MEL command server
+ */
+
 #include<stdio.h>
 #include<string.h>	//strlen
 #include<sys/socket.h>
