@@ -22,7 +22,7 @@ int main(int argc , char *argv[])
 {
 	int socket_desc , new_socket , c;
 	struct sockaddr_in server , client;
-	char inc_message[2000], *message;
+	char inc_message[2000], message[2000];
 	
 	//Create socket
 	socket_desc = socket(AF_INET , SOCK_STREAM , 0);
@@ -44,25 +44,28 @@ int main(int argc , char *argv[])
 	}
 	puts("bind done");
 	
-	//Listen
-	listen(socket_desc , 3);
-	
-	//Accept and incoming connection
-	puts("Waiting for incoming connections...");
-	c = sizeof(struct sockaddr_in);
 
-	new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c);
-	
-	// START EGRESS BLOCK THREAD
-	//
-	// *************************
-
-	puts("Connected");
 
 	int count = 1;
 	int recv_return;
-	while(count <=5)
+	while(1)
 	{
+		//Listen
+		listen(socket_desc , 3);
+	
+		//Accept and incoming connection
+		puts("Waiting for incoming connections...");
+		c = sizeof(struct sockaddr_in);
+
+		new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c);
+	
+		// START EGRESS BLOCK THREAD
+		//
+		// *************************
+
+		puts("Connected");
+		
+		
 		//Read some data
 		if( recv_return =read(new_socket, inc_message , sizeof(inc_message)) && recv_return < 0)
 		{
@@ -75,7 +78,7 @@ int main(int argc , char *argv[])
 		fflush(stdout);
 		sleep(2);
 
-		message = "HELLO SOCKET_WORLD \n\r";
+		strcpy(message, "HELLO SOCKET_WORLD, from the server side! \n\r");
 		if( send(new_socket , message , strlen(message) , 0) < 0)
 		{
 			//FAILURE
