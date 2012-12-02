@@ -10,4 +10,5 @@
 
 system("killall -9 python");
 system("killall packet_queuing_submodule");
+system("killall mel_daemon");
 system("iptables --flush");
