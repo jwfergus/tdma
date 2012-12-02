@@ -89,10 +89,10 @@ int main(int argc , char *argv[])
 	for (int slotCount = 0; slotCount < NUMBER_OF_SLOTS; slotCount++)
 	{
 
-		for (vector< vector<string> >::size_type i = 0; i < listOfIPs.size(); i++)
+		for (vector< vector<string> >::size_type i = 0; i < ApplicationList.size(); i++)
 		{
 		
-			for (vector<string>::size_type j = 0; j < listOfIPs[i].size(); j++)
+			for (vector<string>::size_type j = 0; j < ApplicationList[i].size(); j++)
 			{
 			
 				//Create socket

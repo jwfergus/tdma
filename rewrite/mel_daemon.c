@@ -18,6 +18,25 @@
 #include<arpa/inet.h>	//inet_addr
 #include<unistd.h>	//write / time
 
+#include<iostream>
+using namespace std;
+
+void getIP(char* ip){
+	//Get our IP address
+	FILE *ipPipe;
+	int status;
+
+	ipPipe = popen("ifconfig | grep 'inet addr:192.' | awk '{split($2,a,\":\");print a[2]}'", "r");
+	if (ipPipe == NULL) // ERROR!
+	{
+		cout << "Could not get IP address!" << endl;
+	}
+
+	if(fgets(ip, 100, ipPipe) == NULL)
+		cout << "Problem getting IP address!" << endl;
+	status = pclose(ipPipe);
+}
+
 int main(int argc , char *argv[])
 {
 	int socket_desc , new_socket , c;
@@ -31,9 +50,12 @@ int main(int argc , char *argv[])
 		printf("Could not create socket");
 	}
 	
+	char ip[100];
+	getIP(ip);
+	
 	//Prepare the sockaddr_in structure
 	server.sin_family = AF_INET;
-	server.sin_addr.s_addr = inet_addr("127.0.0.1");
+	server.sin_addr.s_addr = inet_addr(ip);
 	server.sin_port = htons( 8888 );
 	
 	//Bind
@@ -42,7 +64,8 @@ int main(int argc , char *argv[])
 		puts("bind failed");
 		return 1;
 	}
-	puts("bind done");
+	printf("bind done on ip: %s",ip);
+	fflush(stdout);
 	
 
 
