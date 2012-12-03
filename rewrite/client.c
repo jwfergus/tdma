@@ -106,14 +106,14 @@ int main(int argc , char *argv[])
 				
 				
 				//	IP pulled from Node IP list (ApplicationList)
-				server.sin_addr.s_addr = inet_addr(ApplicationList[i][j]);
+				server.sin_addr.s_addr = inet_addr(ApplicationList[i][j].c_str());
 				server.sin_family = AF_INET;
 				server.sin_port = htons( 8888 );
 
 
 				//	Connect to remote server OR DIE! 
 				if (connect(socket_desc , (struct sockaddr *)&server , sizeof(server)) < 0){puts("connect error");return 1;}
-				printf("Connected to %s.\n", ApplicationList[i][j]);
+				printf("Connected to %s.\n", ApplicationList[i][j].c_str());
 				fflush(stdout);
 	
 				//	Send message
@@ -125,7 +125,7 @@ int main(int argc , char *argv[])
 					fflush(stdout);
 					return 1;
 				}
-				printf("\n**Data Sent**\n);
+				printf("\n**Data Sent**\n");
 				fflush(stdout);
 				
 				
