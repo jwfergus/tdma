@@ -100,7 +100,7 @@ int main(int argc , char *argv[])
 		printf("\n**Data Rcvd**\nmessage = %scount = %d\n",inc_message, count);
 		fflush(stdout);
 		
-		/**
+		
 		sleep(2);
 		
 		strcpy(message, "HELLO SOCKET_WORLD, from the server side! \n\r");
@@ -114,7 +114,7 @@ int main(int argc , char *argv[])
 		printf("\n**Data Sent**\ncount = %d\n",count);
 		fflush(stdout);
 		count++;
-		**/
+		
 		
 	}
 	printf("after while loop, last message was: %s, recv_return was: %d", inc_message, recv_return);

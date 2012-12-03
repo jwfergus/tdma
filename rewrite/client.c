@@ -131,8 +131,11 @@ int main(int argc , char *argv[])
 				close(socket_desc);
 
 			}
-			/**
+			
 			int closeAcksReceived = 0;
+			
+			listen(socket_desc , 5);
+
 			while(closeAcksReceived < ApplicationList[i].size())
 			{
 			
@@ -148,7 +151,9 @@ int main(int argc , char *argv[])
 				fflush(stdout);
 			
 			}
-			**/
+			
+			close(socket_desc);
+			
 		
 		}	
 	
