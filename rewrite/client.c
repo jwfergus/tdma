@@ -17,7 +17,7 @@
 #include<sys/socket.h>
 #include<arpa/inet.h>	//inet_addr
 #include<unistd.h>
-
+#include<cerrno>
 #include<iostream>
 #include<fstream>
 #include<sstream>
@@ -26,6 +26,22 @@
 
 #define NUMBER_OF_SLOTS 20
 using namespace std;
+
+void getIP(char* ip){
+	//Get our IP address
+	FILE *ipPipe;
+	int status;
+
+	ipPipe = popen("ifconfig | grep 'inet addr:192.' | awk '{split($2,a,\":\");print a[2]}'", "r");
+	if (ipPipe == NULL) // ERROR!
+	{
+		cout << "Could not get IP address!" << endl;
+	}
+
+	if(fgets(ip, 100, ipPipe) == NULL)
+		cout << "Problem getting IP address!" << endl;
+	status = pclose(ipPipe);
+}
 
 vector< vector<string> > getAppIPList(const char *filename)
 {
@@ -78,8 +94,8 @@ vector< vector<string> > getAppIPList(const char *filename)
 
 int main(int argc , char *argv[])
 {
-	int socket_desc;
-	struct sockaddr_in server;
+	int socket_desc, c;
+	struct sockaddr_in server, client;
 	char message[2000] , server_reply[2000];
 	int recv_return;
 	
@@ -134,16 +150,41 @@ int main(int argc , char *argv[])
 			
 			int closeAcksReceived = 0;
 			
+			socket_desc = socket(AF_INET , SOCK_STREAM , 0);
+			if (socket_desc == -1)
+			{
+			printf("Could not create socket");
+			}
+
+			char ip[100];
+			getIP(ip);
+
+			//Prepare the sockaddr_in structure
+			server.sin_family = AF_INET;
+			server.sin_addr.s_addr = inet_addr(ip);
+			server.sin_port = htons( 8888 );
+
+			//Bind
+			if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
+			{
+			puts("bind failed");
+			return 1;
+			}
+			printf("bind done on ip: %s",ip);
+			fflush(stdout);
+
+
 			listen(socket_desc , 5);
 
 			while(closeAcksReceived < ApplicationList[i].size())
 			{
 			
 				//	Block on READing a message back from server
-				if((recv_return = read(socket_desc, server_reply, sizeof(server_reply))) && recv_return < 0)
+				int new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c);
+				if((recv_return = read(new_socket, server_reply, sizeof(server_reply))) && recv_return < 0)
 				{
 					//FAILURE
-					printf("\n**Read Failed**\nrecv_return: %d", recv_return);
+					printf("\n**Read Failed**\nrecv_return: %d, sock_errno: %s", recv_return, strerror(errno));
 					fflush(stdout);
 					return 1;
 				}

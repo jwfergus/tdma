@@ -39,25 +39,25 @@ void getIP(char* ip){
 
 int main(int argc , char *argv[])
 {
-	int socket_desc , new_socket , c;
-	struct sockaddr_in server , client;
-	char inc_message[2000], message[2000];
+	int socket_desc , new_socket, send_socket, c;
+	struct sockaddr_in server , client, to_send;
+	char inc_message[2000], message[2000], send_message[2000];
 	
-	//Create socket
+	//Create socket FOR LISTENING
 	socket_desc = socket(AF_INET , SOCK_STREAM , 0);
 	if (socket_desc == -1)
 	{
 		printf("Could not create socket");
 	}
-	
+
 	char ip[100];
 	getIP(ip);
-	
+
 	//Prepare the sockaddr_in structure
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = inet_addr(ip);
 	server.sin_port = htons( 8888 );
-	
+
 	//Bind
 	if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
 	{
@@ -67,12 +67,41 @@ int main(int argc , char *argv[])
 	printf("bind done on ip: %s",ip);
 	fflush(stdout);
 	
+	
+	
+	//***************************************************************
+	
+	
+	//Create socket FOR SENDING
+	
+	
+	
+	send_socket = socket(AF_INET , SOCK_STREAM , 0);
+	if (send_socket == -1)
+	{
+		printf("Could not create socket");
+	}
+
+	char send_ip[100];
+	send_ip = "192.168.1.1"
+
+	//Prepare the sockaddr_in structure
+	to_send.sin_family = AF_INET;
+	to_send.sin_addr.s_addr = inet_addr(ip);
+	to_send.sin_port = htons( 8888 );
+	
+	
+	
+	//********************************************************
+	// 		Main Loop
 
 
 	int count = 1;
 	int recv_return;
 	while(1)
 	{
+
+		
 		//Listen
 		listen(socket_desc , 3);
 	
@@ -103,16 +132,27 @@ int main(int argc , char *argv[])
 		
 		sleep(2);
 		
-		strcpy(message, "HELLO SOCKET_WORLD, from the server side! \n\r");
-		if( send(new_socket , message , strlen(message) , 0) < 0)
-		{
+		//
+		//		SEND INFO BACK TO CENTRAL SERVER
+		//
+		if (connect(send_socket , (struct sockaddr *)&to_send , sizeof(to_send)) < 0){puts("connect error");return 1;}
+			printf("Connected to %s.\n", send_ip);
+		fflush(stdout);
+
+		//	Send message
+		strcpy(send_message, "HELLO FROM A NODE \n\r");
+		if( send(send_socket , send_message , strlen(send_message) , 0) < 0)
+			{
 			//FAILURE
-			printf("\n**Send Failed**\nCur Message: %s", message);
+			printf("\n**Send Failed**\nCur Message: %s", send_message);
 			fflush(stdout);
 			return 1;
-		}
-		printf("\n**Data Sent**\ncount = %d\n",count);
+			}
+		printf("\n**Data Sent**\n");
 		fflush(stdout);
+
+		close(send_socket);
+
 		count++;
 		
 		

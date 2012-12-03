@@ -30,6 +30,9 @@ class App:
 
         self.kill_and_flush = Button(frame, text="Kill and Flush", command=kill_and_flush.kill_and_flush)
         self.kill_and_flush.pack(side=LEFT)
+        
+        self.kill_and_flush = Button(frame, text="Clean nohup.out", command=kill_and_flush.clean_nohup)
+        self.kill_and_flush.pack(side=LEFT)
 
         self.start_node_MEL = Button(frame, text="Start Node MEL", command=start_node_MEL.start)
         self.start_node_MEL.pack(side=LEFT)
