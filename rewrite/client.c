@@ -81,10 +81,11 @@ int main(int argc , char *argv[])
 	int socket_desc;
 	struct sockaddr_in server;
 	char message[2000] , server_reply[2000];
-	int count = 1;
 	int recv_return;
 	
-	
+	//
+	//	Loop over Time Slot -> Application -> Node IP
+	//
 	vector< vector<string> > ApplicationList = getAppIPList("test.txt");
 	for (int slotCount = 0; slotCount < NUMBER_OF_SLOTS; slotCount++)
 	{
@@ -94,28 +95,28 @@ int main(int argc , char *argv[])
 		
 			for (vector<string>::size_type j = 0; j < ApplicationList[i].size(); j++)
 			{
-			
-				//Create socket
+				//
+				//	Per Node IP:
+				//
+				
+				//	Create socket
 				socket_desc = socket(AF_INET , SOCK_STREAM , 0);
 				if (socket_desc == -1)
-				{
 					printf("Could not create socket");
-				}
-		
-				server.sin_addr.s_addr = inet_addr("127.0.0.1");
+				
+				
+				//	IP pulled from Node IP list (ApplicationList)
+				server.sin_addr.s_addr = inet_addr(ApplicationList[i][j]);
 				server.sin_family = AF_INET;
 				server.sin_port = htons( 8888 );
 
-				//Connect to remote server
-				if (connect(socket_desc , (struct sockaddr *)&server , sizeof(server)) < 0)
-				{
-					puts("connect error");
-					return 1;
-				}
+
+				//	Connect to remote server OR DIE! 
+				if (connect(socket_desc , (struct sockaddr *)&server , sizeof(server)) < 0){puts("connect error");return 1;}
+				printf("Connected to %s.\n", ApplicationList[i][j]);
+				fflush(stdout);
 	
-				puts("Connected\n");
-	
-				//Send some data
+				//	Send message
 				strcpy(message, "HELLO SOCKET_WORLD \n\r");
 				if( send(socket_desc , message , strlen(message) , 0) < 0)
 				{
@@ -124,9 +125,11 @@ int main(int argc , char *argv[])
 					fflush(stdout);
 					return 1;
 				}
-				printf("\n**Data Sent**\ncount = %d\n",count);
+				printf("\n**Data Sent**\n);
 				fflush(stdout);
-		
+				
+				
+				//	Block on READing a message back from server
 				if((recv_return = read(socket_desc, server_reply, sizeof(server_reply))) && recv_return < 0)
 				{
 					//FAILURE
@@ -134,10 +137,10 @@ int main(int argc , char *argv[])
 					fflush(stdout);
 					return 1;
 				}
-				printf("\n**Data Rcvd**\nserver_reply = %s, count = %d\n",server_reply, count);
+				printf("\n**Data Rcvd**\nserver_reply = %s\n",server_reply);
 				fflush(stdout);
-				count++;
-
+				
+				close(socket_desc);
 
 			}
 		
