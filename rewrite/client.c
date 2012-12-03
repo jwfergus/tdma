@@ -128,7 +128,14 @@ int main(int argc , char *argv[])
 				printf("\n**Data Sent**\n");
 				fflush(stdout);
 				
-				
+				close(socket_desc);
+
+			}
+			/**
+			int closeAcksReceived = 0;
+			while(closeAcksReceived < ApplicationList[i].size())
+			{
+			
 				//	Block on READing a message back from server
 				if((recv_return = read(socket_desc, server_reply, sizeof(server_reply))) && recv_return < 0)
 				{
@@ -139,10 +146,9 @@ int main(int argc , char *argv[])
 				}
 				printf("\n**Data Rcvd**\nserver_reply = %s\n",server_reply);
 				fflush(stdout);
-				
-				close(socket_desc);
-
+			
 			}
+			**/
 		
 		}	
 	
