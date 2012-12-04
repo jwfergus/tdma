@@ -12,33 +12,21 @@
  * Initial implementation of MEL command server
  */
 
-
-
-#include<iostream>
-#include<fstream>
-#include<sstream>
-#include<string>
-#include<vector>
-using namespace std;
-
+#include "comm_functions.h"
+#include<unistd.h>
+#include<stdio.h>
+#include<string.h>
 
 int main(int argc , char *argv[])
 {
-	FILE *fp;
-	int status;
-	char path[100];
-
-
-	fp = popen("ifconfig | grep 'inet addr:192.' | awk '{split($2,a,\":\");print a[2]}'", "r");
-	if (fp == NULL)
-	    /* Handle error */;
-
-
-	while (fgets(path, 100, fp) != NULL)
-	    printf("%s", path);
-
-
-	status = pclose(fp);
+	char ip[100];
+	getLocalIP(ip);
+	printf("IPtest: %s", ip);
 	
+	
+	int messageSize = 2000;
+	char message[messageSize];
+	strcpy(message, "HELLO SOCKET_WORLD \n\r");
+	sendMessage(message, messageSize, "192.168.1.101", 8888);
 	return 0;
 }
