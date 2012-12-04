@@ -82,8 +82,7 @@ int main(int argc , char *argv[])
 		printf("Could not create socket");
 	}
 
-	char send_ip[100];
-	send_ip = "192.168.1.1"
+	const char* send_ip = "192.168.1.1";
 
 	//Prepare the sockaddr_in structure
 	to_send.sin_family = AF_INET;
