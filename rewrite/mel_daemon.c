@@ -135,7 +135,7 @@ int main(int argc , char *argv[])
 		//
 		//		SEND INFO BACK TO CENTRAL SERVER
 		//
-		if (connect(send_socket , (struct sockaddr *)&to_send , sizeof(to_send)) < 0){puts("connect error: %s",strerror(errno));return 1;}
+		if (connect(send_socket , (struct sockaddr *)&to_send , sizeof(to_send)) < 0){printf("connect error: %s",strerror(errno));return 1;}
 			printf("Connected to %s.\n", send_ip);
 		fflush(stdout);
 
