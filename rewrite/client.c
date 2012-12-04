@@ -94,7 +94,7 @@ vector< vector<string> > getAppIPList(const char *filename)
 
 int main(int argc , char *argv[])
 {
-	int socket_desc, c;
+	int socket_desc, rcv_ack_socket, c;
 	struct sockaddr_in server, client;
 	char message[2000] , server_reply[2000];
 	int recv_return;
@@ -150,8 +150,8 @@ int main(int argc , char *argv[])
 			
 			int closeAcksReceived = 0;
 			
-			socket_desc = socket(AF_INET , SOCK_STREAM , 0);
-			if (socket_desc == -1)
+			rcv_ack_socket = socket(AF_INET , SOCK_STREAM , 0);
+			if (rcv_ack_socket == -1)
 			{
 			printf("Could not create socket");
 			}
@@ -165,7 +165,7 @@ int main(int argc , char *argv[])
 			server.sin_port = htons( 8888 );
 
 			//Bind
-			if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
+			if( bind(rcv_ack_socket,(struct sockaddr *)&server , sizeof(server)) < 0)
 			{
 			puts("bind failed");
 			return 1;
@@ -174,13 +174,18 @@ int main(int argc , char *argv[])
 			fflush(stdout);
 
 
-			listen(socket_desc , 5);
+			listen(rcv_ack_socket , 5);
 
 			while(closeAcksReceived < ApplicationList[i].size())
 			{
 			
 				//	Block on READing a message back from server
-				int new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c);
+				printf("Before accepting connection");
+				fflush(stdout);
+				int new_socket = accept(rcv_ack_socket, (struct sockaddr *)&client, (socklen_t*)&c);
+				printf("After accepting connection, but before reading");
+				fflush(stdout);
+				
 				if((recv_return = read(new_socket, server_reply, sizeof(server_reply))) && recv_return < 0)
 				{
 					//FAILURE
@@ -193,7 +198,7 @@ int main(int argc , char *argv[])
 			
 			}
 			
-			close(socket_desc);
+			close(rcv_ack_socket);
 			
 		
 		}	
