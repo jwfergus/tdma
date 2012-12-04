@@ -151,10 +151,10 @@ int main(int argc , char *argv[])
 			int closeAcksReceived = 0;
 			
 			rcv_ack_socket = socket(AF_INET , SOCK_STREAM , 0);
-			if (rcv_ack_socket == -1)
-			{
-			printf("Could not create socket");
-			}
+			int optval;
+			optval = 1;
+			setsockopt(rcv_ack_socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
+			if (rcv_ack_socket == -1){printf("Could not create socket: %s", strerror(errno));}			
 
 			char ip[100];
 			getIP(ip);
@@ -167,7 +167,7 @@ int main(int argc , char *argv[])
 			//Bind
 			if( bind(rcv_ack_socket,(struct sockaddr *)&server , sizeof(server)) < 0)
 			{
-			puts("bind failed");
+			printf("\n**bind failed**\n, %s", strerror(errno));
 			return 1;
 			}
 			printf("bind done on ip: %s",ip);
@@ -195,6 +195,7 @@ int main(int argc , char *argv[])
 				}
 				printf("\n**Data Rcvd**\nserver_reply = %s\n",server_reply);
 				fflush(stdout);
+				closeAcksReceived++;
 			
 			}
 			
