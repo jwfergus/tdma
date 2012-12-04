@@ -86,7 +86,7 @@ int main(int argc , char *argv[])
 
 	//Prepare the sockaddr_in structure
 	to_send.sin_family = AF_INET;
-	to_send.sin_addr.s_addr = inet_addr(ip);
+	to_send.sin_addr.s_addr = inet_addr(send_ip);
 	to_send.sin_port = htons( 8888 );
 	
 	
