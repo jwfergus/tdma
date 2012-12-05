@@ -18,8 +18,9 @@
 #include<arpa/inet.h>	//inet_addr
 #include<unistd.h>	//write / time
 #include<cerrno>
-
 #include<iostream>
+#include "comm_functions.h"
+
 using namespace std;
 
 void getIP(char* ip){
@@ -41,7 +42,7 @@ void getIP(char* ip){
 int main(int argc , char *argv[])
 {
 	int socket_desc , new_socket, send_socket, c;
-	struct sockaddr_in server , client, to_send;
+	struct sockaddr_in server , client, to_send, getRemoteIPAddr;
 	char inc_message[2000], message[2000], send_message[2000];
 	
 	//Create socket FOR LISTENING
@@ -135,23 +136,10 @@ int main(int argc , char *argv[])
 		//
 		//		SEND INFO BACK TO CENTRAL SERVER
 		//
-		if (connect(send_socket , (struct sockaddr *)&to_send , sizeof(to_send)) < 0){printf("connect error: %s",strerror(errno));return 1;}
-			printf("Connected to %s.\n", send_ip);
-		fflush(stdout);
-
-		//	Send message
-		strcpy(send_message, "HELLO FROM A NODE \n\r");
-		if( send(send_socket , send_message , strlen(send_message) , 0) < 0)
-			{
-			//FAILURE
-			printf("\n**Send Failed**\nCur Message: %s", send_message);
-			fflush(stdout);
-			return 1;
-			}
-		printf("\n**Data Sent**\n");
-		fflush(stdout);
-
-		close(send_socket);
+		char* sendIP = new char[sizeof(send_ip)+1];
+		strcpy(sendIP, send_ip);
+		
+		sendMessage(message, sendIP, 8888);
 
 		count++;
 		

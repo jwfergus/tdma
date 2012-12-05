@@ -131,26 +131,6 @@ int main(int argc , char *argv[])
 				char* sendIP = new char[ApplicationList[i][j].size()+1];
 				strcpy(sendIP, ApplicationList[i][j].c_str());
 				sendMessage(message, sendIP, 8888);
-				/**
-				//	Connect to remote server OR DIE! 
-				if (connect(socket_desc , (struct sockaddr *)&server , sizeof(server)) < 0){puts("connect error");return 1;}
-				printf("Connected to %s.\n", ApplicationList[i][j].c_str());
-				fflush(stdout);
-	
-				//	Send message
-				strcpy(message, "HELLO SOCKET_WORLD \n\r");
-				if( send(socket_desc , message , strlen(message) , 0) < 0)
-				{
-					//FAILURE
-					printf("\n**Send Failed**\nCur Message: %s", message);
-					fflush(stdout);
-					return 1;
-				}
-				printf("\n**Data Sent**\n");
-				fflush(stdout);
-				
-				close(socket_desc);
-				//**/
 
 			}
 			
