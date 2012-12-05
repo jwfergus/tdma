@@ -86,9 +86,11 @@ void receiveMessage(char* ip, char* message, int port){
 	printf("Bind done on ip: %s", ip);
 	fflush(stdout);
 	
-	listen(socketFileDescriptor, 1);
+	listen(socketFileDescriptor, 2);
 	
 	acceptedSockFileDescriptor = accept(socketFileDescriptor, (struct sockaddr *)&remoteAddressInfo, (socklen_t*)sizeof(remoteAddressInfo));
+	printf("Connection Accepted");
+	fflush(stdout);
 	
 	if( read(socketFileDescriptor, message, strlen(message)) < 0)
 		{ printf("\n***Read Failed**\n Error: %s", strerror(errno)); fflush(stdout);}
