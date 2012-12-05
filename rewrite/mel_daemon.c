@@ -48,7 +48,7 @@ int main(int argc , char *argv[])
 
 	//********************************************************
 	// 		Main Loop
-
+	getIP(ip);
 
 	int count = 1;
 	int recv_return;
