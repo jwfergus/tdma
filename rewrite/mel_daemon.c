@@ -13,10 +13,10 @@
  */
 
 #include<stdio.h>
-#include<string.h>	//strlen
+#include<string.h>	
 #include<sys/socket.h>
-#include<arpa/inet.h>	//inet_addr
-#include<unistd.h>	//write / time
+#include<arpa/inet.h>	
+#include<unistd.h>	
 #include<cerrno>
 #include<iostream>
 #include "comm_functions.h"
@@ -41,58 +41,11 @@ void getIP(char* ip){
 
 int main(int argc , char *argv[])
 {
-	int socket_desc , new_socket, send_socket, c;
-	struct sockaddr_in server , client, to_send, getRemoteIPAddr;
-	char inc_message[2000], message[2000], send_message[2000];
-	
-	//Create socket FOR LISTENING
-	socket_desc = socket(AF_INET , SOCK_STREAM , 0);
-	if (socket_desc == -1)
-	{
-		printf("Could not create socket");
-	}
 
-	char ip[100];
-	getIP(ip);
-
-	//Prepare the sockaddr_in structure
-	server.sin_family = AF_INET;
-	server.sin_addr.s_addr = inet_addr(ip);
-	server.sin_port = htons( 8888 );
-
-	//Bind
-	if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
-	{
-		puts("bind failed");
-		return 1;
-	}
-	printf("bind done on ip: %s",ip);
-	fflush(stdout);
-	
-	
-	
-	//***************************************************************
-	
-	
-	//Create socket FOR SENDING
-	
-	
-	
-	send_socket = socket(AF_INET , SOCK_STREAM , 0);
-	if (send_socket == -1)
-	{
-		printf("Could not create socket");
-	}
-
+	char message[1024], ip[128];
+	char* incomingMessage;
 	const char* send_ip = "192.168.1.1";
 
-	//Prepare the sockaddr_in structure
-	to_send.sin_family = AF_INET;
-	to_send.sin_addr.s_addr = inet_addr(send_ip);
-	to_send.sin_port = htons( 8888 );
-	
-	
-	
 	//********************************************************
 	// 		Main Loop
 
@@ -101,33 +54,11 @@ int main(int argc , char *argv[])
 	int recv_return;
 	while(1)
 	{
-
-		
-		//Listen
-		listen(socket_desc , 3);
-	
-		//Accept and incoming connection
-		puts("Waiting for incoming connections...");
-		c = sizeof(struct sockaddr_in);
-
-		new_socket = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c);
-	
-		// START EGRESS BLOCK THREAD
 		//
-		// *************************
-
-		puts("Connected");
-		
-		
-		//Read some data
-		if( recv_return =read(new_socket, inc_message , sizeof(inc_message)) && recv_return < 0)
-		{
-			//FAILURE
-			printf("\n**Read Failed**\nrecv_return: %d", recv_return);
-			fflush(stdout);
-			return 1;
-		}
-		printf("\n**Data Rcvd**\nmessage = %scount = %d\n",inc_message, count);
+		//		RECEIVE COMMAND FROM CENTRAL SERVER
+		//
+		receiveMessage(ip, incomingMessage, 8888);
+		printf("\n**Data Rcvd**\nmessage = %scount = %d\n",incomingMessage, count);
 		fflush(stdout);
 		
 		
@@ -144,18 +75,6 @@ int main(int argc , char *argv[])
 		count++;
 		
 		
-	}
-	printf("after while loop, last message was: %s, recv_return was: %d", inc_message, recv_return);
-	
-	
-	//Reply to the client
-//	message = "Hello Client , I have received your connection. But I have to go now, bye\n";
-//	write(new_socket , message , strlen(message));
-	
-	if (new_socket<0)
-	{
-		perror("accept failed");
-		return 1;
 	}
 	
 	return 0;

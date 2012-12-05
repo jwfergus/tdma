@@ -14,4 +14,4 @@
  
  void getLocalIP(char* ip);
  void sendMessage(char* message, char* ip, int port);
- void receiveMessage(char* message, int messageSize, char*ip, int port);
+ void receiveMessage(char* ip, char* message, int port);
