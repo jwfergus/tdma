@@ -120,7 +120,7 @@ int main(int argc , char *argv[])
 
 			}
 			
-			int closeAcksReceived = 0;
+			unsigned int closeAcksReceived = 0;
 			char ip[128];
 			getIP(ip);
 

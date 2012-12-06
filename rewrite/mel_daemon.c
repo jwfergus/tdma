@@ -50,15 +50,13 @@ int main(int argc , char *argv[])
 	// 		Main Loop
 	getIP(ip);
 
-	int count = 1;
-	int recv_return;
 	while(1)
 	{
 		//
 		//		RECEIVE COMMAND FROM CENTRAL SERVER
 		//
 		receiveMessage(ip, incomingMessage, 8888);
-		printf("\n**Data Rcvd**\nmessage = %scount = %d\n",incomingMessage, count);
+		printf("\n**Data Rcvd**\nmessage = %s\n",incomingMessage);
 		fflush(stdout);
 		
 		
@@ -71,8 +69,6 @@ int main(int argc , char *argv[])
 		strcpy(sendIP, send_ip);
 		
 		sendMessage(message, sendIP, 8888);
-
-		count++;
 		
 		
 	}
