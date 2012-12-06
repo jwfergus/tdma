@@ -56,8 +56,9 @@ int main(int argc , char *argv[])
 		//		RECEIVE COMMAND FROM CENTRAL SERVER
 		//
 		incomingMessage = receiveMessage(ip, 8888);
-		printf("\n**Data Rcvd**\nmessage = %s\n",incomingMessage);
+		printf("\n******mel_daemon - Data Rcvd**\nmessage = %s\n",incomingMessage);
 		fflush(stdout);
+		delete(incomingMessage);
 		
 		
 		sleep(2);

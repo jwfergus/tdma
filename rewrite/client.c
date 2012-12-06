@@ -130,6 +130,9 @@ int main(int argc , char *argv[])
 			
 				//	Block on READing a message back from server
 				char* serverReply = receiveMessage(ip, 8888); // Need to delete serverReply??
+				printf("\n**Server reply** - %s\n", serverReply);
+				fflush(stdout);
+				delete(serverReply);
 				closeAcksReceived++;
 			
 			}

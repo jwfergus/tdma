@@ -44,8 +44,7 @@ void sendMessage(char* message, char* ip, int port){
 	//struct linger socketLingerOption;
 	//socketLingerOption.l_onoff = 1;
 	//socketLingerOption.l_linger = 5;
-	printf("Inside sendMessage - message: %s, ip: %s, port: %d", message, ip, port);
-	cout << "\n***************\n" << endl;
+	printf("\n**Inside sendMessage - message: %s, ip: %s, port: %d**\n", message, ip, port);
 	
 	int socketFileDescriptor;
 	struct sockaddr_in addressInfo;
@@ -62,7 +61,7 @@ void sendMessage(char* message, char* ip, int port){
 	
 	if(connect(socketFileDescriptor, (struct sockaddr *)&addressInfo, sizeof(addressInfo)) < 0)
 		{ printf("\n***Connect Problem!**\n Error: %s", strerror(errno)); fflush(stdout);}
-	printf("SendMessage connected to remote ip: %s", ip);
+	printf("\n**SendMessage connected to remote ip: %s**\n", ip);
 	fflush(stdout);
 	
 	if( send(socketFileDescriptor, message, strlen(message), 0) < 0)
@@ -76,8 +75,7 @@ void sendMessage(char* message, char* ip, int port){
 }
 
 char *receiveMessage(char* ip, int port){
-	printf("Inside receiveMessage - ip: %s, port: %d", ip, port);
-	cout << "\n***************\n" << endl;
+	printf("\n**Inside receiveMessage - ip: %s, port: %d**\n", ip, port);
 	
 	int socketFileDescriptor, acceptedSockFileDescriptor;
 	struct sockaddr_in localAddressInfo, remoteAddressInfo;
@@ -92,19 +90,19 @@ char *receiveMessage(char* ip, int port){
 	
 	if(bind(socketFileDescriptor, (struct sockaddr *)&localAddressInfo, sizeof(localAddressInfo)) < 0)
 		{ printf("\n***Bind Failed!**\n Error: %s", strerror(errno)); fflush(stdout);}
-	printf("Bind done on ip: %s", ip);
+	printf("\n**Bind done on ip: %s**\n", ip);
 	fflush(stdout);
 	
 	listen(socketFileDescriptor, 2);
 	unsigned int remoteAddressLength = sizeof(remoteAddressInfo);
 	if((acceptedSockFileDescriptor = accept(socketFileDescriptor, (struct sockaddr *) &remoteAddressInfo, &remoteAddressLength)) < 0)
 		{ printf("\n***Accept Failed!**\n Error: %s", strerror(errno)); fflush(stdout);}
-	printf("Connection Accepted");
+	printf("\n**Connection Accepted**\n");
 	fflush(stdout);
 	char* message = new char[1024];
 	if( read(acceptedSockFileDescriptor, message, sizeof(message)) < 0)
 		{ printf("\n***Read Failed**\n Error: %s", strerror(errno)); fflush(stdout);}
-	printf("\n**Data Received"); //Should correct this to specify which IP it is receiving from. . .
+	printf("\n**Data Received**\n"); //Should correct this to specify which IP it is receiving from. . .
 	fflush(stdout);
 	
 	close(acceptedSockFileDescriptor);
