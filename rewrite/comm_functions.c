@@ -40,15 +40,22 @@ void getLocalIP(char* ip){
 }
 
 void sendMessage(char* message, char* ip, int port){
-
+	
+	//struct linger socketLingerOption;
+	//socketLingerOption.l_onoff = 1;
+	//socketLingerOption.l_linger = 5;
 	printf("Inside sendMessage - message: %s, ip: %s, port: %d", message, ip, port);
 	cout << "\n***************\n" << endl;
 	
 	int socketFileDescriptor;
 	struct sockaddr_in addressInfo;
 	socketFileDescriptor = socket(AF_INET, SOCK_STREAM, 0);
+	
 	if(socketFileDescriptor == -1)
 		{ printf("\n***Socket Creation Failed!**\n Error: %s", strerror(errno)); fflush(stdout);}
+	
+	//setsockopt(socketFileDescriptor, SOL_SOCKET, SO_LINGER, &socketLingerOption, sizeof(socketLingerOption));
+	
 	addressInfo.sin_addr.s_addr = inet_addr(ip);
 	addressInfo.sin_family = AF_INET;
 	addressInfo.sin_port = htons(port);
@@ -62,7 +69,8 @@ void sendMessage(char* message, char* ip, int port){
 		{ printf("\n***Send Failed**\n Error: %s", strerror(errno)); fflush(stdout);}
 	printf("\n**Data Sent to %s**\n", ip);
 	fflush(stdout);
-	close(socketFileDescriptor);
+	shutdown(socketFileDescriptor, SHUT_RD);
+	
 
 }
 
@@ -89,8 +97,8 @@ void receiveMessage(char* ip, char* message, int port){
 	listen(socketFileDescriptor, 2);
 	
 	acceptedSockFileDescriptor = accept(socketFileDescriptor, (struct sockaddr *)&remoteAddressInfo, (socklen_t*)sizeof(remoteAddressInfo));
-	printf("Connection Accepted");
-	fflush(stdout);
+	puts("Connection Accepted");
+	//fflush(stdout);
 	
 	if( read(socketFileDescriptor, message, strlen(message)) < 0)
 		{ printf("\n***Read Failed**\n Error: %s", strerror(errno)); fflush(stdout);}

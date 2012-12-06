@@ -95,10 +95,7 @@ vector< vector<string> > getAppIPList(const char *filename)
 
 int main(int argc , char *argv[])
 {
-	int socket_desc, rcv_ack_socket, c;
-	struct sockaddr_in server, client;
-	char message[2000] , server_reply[2000];
-	int recv_return;
+	char message[1024] , serverReply[1024];
 	
 	//
 	//	Loop over Time Slot -> Application -> Node IP
@@ -116,17 +113,6 @@ int main(int argc , char *argv[])
 				//	Per Node IP:
 				//
 				
-				//	Create socket
-				socket_desc = socket(AF_INET , SOCK_STREAM , 0);
-				if (socket_desc == -1)
-					printf("Could not create socket");
-				
-				
-				//	IP pulled from Node IP list (ApplicationList)
-				server.sin_addr.s_addr = inet_addr(ApplicationList[i][j].c_str());
-				server.sin_family = AF_INET;
-				server.sin_port = htons( 8888 );
-				
 				strcpy(message, "HELLO SOCKET_WORLD \n\r");
 				char* sendIP = new char[ApplicationList[i][j].size()+1];
 				strcpy(sendIP, ApplicationList[i][j].c_str());
@@ -135,57 +121,18 @@ int main(int argc , char *argv[])
 			}
 			
 			int closeAcksReceived = 0;
-			
-			rcv_ack_socket = socket(AF_INET , SOCK_STREAM , 0);
-			int optval;
-			optval = 1;
-			setsockopt(rcv_ack_socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
-			if (rcv_ack_socket == -1){printf("Could not create socket: %s", strerror(errno));}			
-
-			char ip[100];
+			char ip[128];
 			getIP(ip);
 
-			//Prepare the sockaddr_in structure
-			server.sin_family = AF_INET;
-			server.sin_addr.s_addr = inet_addr(ip);
-			server.sin_port = htons( 8888 );
-
-			//Bind
-			if( bind(rcv_ack_socket,(struct sockaddr *)&server , sizeof(server)) < 0)
-			{
-			printf("\n**bind failed**\n, %s", strerror(errno));
-			return 1;
-			}
-			printf("bind done on ip: %s",ip);
-			fflush(stdout);
-
-
-			listen(rcv_ack_socket , 5);
 
 			while(closeAcksReceived < ApplicationList[i].size())
 			{
 			
 				//	Block on READing a message back from server
-				printf("Before accepting connection");
-				fflush(stdout);
-				int new_socket = accept(rcv_ack_socket, (struct sockaddr *)&client, (socklen_t*)&c);
-				printf("After accepting connection, but before reading");
-				fflush(stdout);
-				
-				if((recv_return = read(new_socket, server_reply, sizeof(server_reply))) && recv_return < 0)
-				{
-					//FAILURE
-					printf("\n**Read Failed**\nrecv_return: %d, sock_errno: %s", recv_return, strerror(errno));
-					fflush(stdout);
-					return 1;
-				}
-				printf("\n**Data Rcvd**\nserver_reply = %s\n",server_reply);
-				fflush(stdout);
+				receiveMessage(ip, serverReply, 8888);
 				closeAcksReceived++;
 			
 			}
-			
-			close(rcv_ack_socket);
 			
 		
 		}	
