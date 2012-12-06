@@ -101,7 +101,7 @@ void receiveMessage(char* ip, char* message, int port){
 	printf("Connection Accepted");
 	fflush(stdout);
 	
-	if( read(socketFileDescriptor, message, strlen(message)) < 0)
+	if( read(socketFileDescriptor, message, sizeof(message)) < 0)
 		{ printf("\n***Read Failed**\n Error: %s", strerror(errno)); fflush(stdout);}
 	printf("\n**Data Received"); //Should correct this to specify which IP it is receiving from. . .
 	fflush(stdout);
