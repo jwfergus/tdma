@@ -70,6 +70,7 @@ void sendMessage(char* message, char* ip, int port){
 	printf("\n**Data Sent to %s**\n", ip);
 	fflush(stdout);
 	shutdown(socketFileDescriptor, SHUT_RD);
+	close(socketFileDescriptor);
 	
 
 }
@@ -97,8 +98,8 @@ void receiveMessage(char* ip, char* message, int port){
 	listen(socketFileDescriptor, 2);
 	
 	acceptedSockFileDescriptor = accept(socketFileDescriptor, (struct sockaddr *)&remoteAddressInfo, (socklen_t*)sizeof(remoteAddressInfo));
-	puts("Connection Accepted");
-	//fflush(stdout);
+	printf("Connection Accepted");
+	fflush(stdout);
 	
 	if( read(socketFileDescriptor, message, strlen(message)) < 0)
 		{ printf("\n***Read Failed**\n Error: %s", strerror(errno)); fflush(stdout);}
