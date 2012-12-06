@@ -55,7 +55,7 @@ int main(int argc , char *argv[])
 		//
 		//		RECEIVE COMMAND FROM CENTRAL SERVER
 		//
-		receiveMessage(ip, incomingMessage, 8888);
+		incomingMessage = receiveMessage(ip, 8888);
 		printf("\n**Data Rcvd**\nmessage = %s\n",incomingMessage);
 		fflush(stdout);
 		

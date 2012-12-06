@@ -95,7 +95,7 @@ vector< vector<string> > getAppIPList(const char *filename)
 
 int main(int argc , char *argv[])
 {
-	char message[1024] , serverReply[1024];
+	char message[1024];
 	
 	//
 	//	Loop over Time Slot -> Application -> Node IP
@@ -129,7 +129,7 @@ int main(int argc , char *argv[])
 			{
 			
 				//	Block on READing a message back from server
-				receiveMessage(ip, serverReply, 8888);
+				char* serverReply = receiveMessage(ip, 8888); // Need to delete serverReply??
 				closeAcksReceived++;
 			
 			}

@@ -75,7 +75,7 @@ void sendMessage(char* message, char* ip, int port){
 
 }
 
-void receiveMessage(char* ip, char* message, int port){
+char *receiveMessage(char* ip, int port){
 	printf("Inside receiveMessage - ip: %s, port: %d", ip, port);
 	cout << "\n***************\n" << endl;
 	
@@ -101,7 +101,7 @@ void receiveMessage(char* ip, char* message, int port){
 		{ printf("\n***Accept Failed!**\n Error: %s", strerror(errno)); fflush(stdout);}
 	printf("Connection Accepted");
 	fflush(stdout);
-	
+	char* message = new char[1024];
 	if( read(acceptedSockFileDescriptor, message, sizeof(message)) < 0)
 		{ printf("\n***Read Failed**\n Error: %s", strerror(errno)); fflush(stdout);}
 	printf("\n**Data Received"); //Should correct this to specify which IP it is receiving from. . .
@@ -109,6 +109,7 @@ void receiveMessage(char* ip, char* message, int port){
 	
 	close(acceptedSockFileDescriptor);
 	close(socketFileDescriptor);
+	return message;
 }
 
 
