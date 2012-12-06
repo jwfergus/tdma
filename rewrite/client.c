@@ -106,7 +106,8 @@ int main(int argc , char *argv[])
 
 		for (vector< vector<string> >::size_type i = 0; i < ApplicationList.size(); i++)
 		{
-		
+			printf("\n\n************\nSending Messages for App %d", i);
+			fflush(stdout);
 			for (vector<string>::size_type j = 0; j < ApplicationList[i].size(); j++)
 			{
 				//
@@ -120,22 +121,16 @@ int main(int argc , char *argv[])
 
 			}
 			
-			unsigned int closeAcksReceived = 0;
+			
 			char ip[128];
 			getIP(ip);
 
-
-			while(closeAcksReceived < ApplicationList[i].size())
-			{
+			printf("\n\n************\nReceiving Message Counts for App %d", i);
+			fflush(stdout);
 			
-				//	Block on READing a message back from server
-				char* serverReply = receiveMessage(ip, 8888); // Need to delete serverReply??
-				printf("\n**Server reply** - %s\n", serverReply);
-				fflush(stdout);
-				delete(serverReply);
-				closeAcksReceived++;
+			countMessagesReceived(ip, 8888, ApplicationList[i].size());
 			
-			}
+			
 			
 		
 		}	

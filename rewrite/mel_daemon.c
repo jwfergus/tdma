@@ -20,7 +20,6 @@
 #include<cerrno>
 #include<iostream>
 #include "comm_functions.h"
-
 using namespace std;
 
 void getIP(char* ip){
