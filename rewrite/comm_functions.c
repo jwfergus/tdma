@@ -97,7 +97,8 @@ void receiveMessage(char* ip, char* message, int port){
 	
 	listen(socketFileDescriptor, 2);
 	
-	acceptedSockFileDescriptor = accept(socketFileDescriptor, (struct sockaddr *)&remoteAddressInfo, (socklen_t*)sizeof(remoteAddressInfo));
+	if(acceptedSockFileDescriptor = accept(socketFileDescriptor, (struct sockaddr *)&remoteAddressInfo, (socklen_t*)sizeof(remoteAddressInfo)) < 0)
+		{ printf("\n***Accept Failed!**\n Error: %s", strerror(errno)); fflush(stdout);}
 	printf("Connection Accepted");
 	fflush(stdout);
 	
