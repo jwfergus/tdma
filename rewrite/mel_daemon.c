@@ -46,7 +46,7 @@ struct nfnl_handle *netlinkHandle;
 int fd, res;
 char buf[4096];
 
-double max_time;
+double max_time = 2;
 time_t start_time, current_time_diff, current_time;
 char* time_string_to_print;
 
