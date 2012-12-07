@@ -25,7 +25,7 @@
 #include<vector>
 #include "comm_functions.h"
 
-#define NUMBER_OF_SLOTS 20
+#define NUMBER_OF_SLOTS 100
 using namespace std;
 
 void getIP(char* ip){
