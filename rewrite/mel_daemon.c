@@ -209,7 +209,7 @@ int main(int argc , char *argv[])
 		 * PACK QUEUE CODE START
 		 */
 		start_time = time(NULL);
-		while ((res = recv(fd, buf, sizeof(buf), 0)) && res >= 0) {
+		while ( ((res = recv(fd, buf, sizeof(buf), MSG_DONTWAIT)) && res >= 0) || ((start_time - (current_time = time(NULL))) < max_time) ) {
 
 			// I am not totally sure why a callback mechanism is used
 			// rather than just handling it directly here, but that
