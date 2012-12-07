@@ -25,7 +25,7 @@ spawn ssh mel@$input_ip
 expect "password:" 
 send "$pass\r" 
 expect "$ "
-send "nohup python mutual-exclusion-logic/demonstration/application_ping.py 5 5 &\r"
+send "nohup python mutual-exclusion-logic/demonstration/application_ping.py 5 60 &\r"
 expect "$ "
 
 
