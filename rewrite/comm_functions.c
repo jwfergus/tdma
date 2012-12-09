@@ -27,7 +27,6 @@ using namespace std;
 
 void getLocalIP(char* ip){
 	FILE *ipPipe;
-	int status;
 
 	ipPipe = popen("ifconfig | grep 'inet addr:192.' | awk '{split($2,a,\":\");print a[2]}'", "r");
 	if (ipPipe == NULL) 
@@ -36,7 +35,7 @@ void getLocalIP(char* ip){
 	if(fgets(ip, 100, ipPipe) == NULL)
 		{ printf("***Problem getting IP address!**\n Error: %s", strerror(errno)); fflush(stdout);}
 		
-	status = pclose(ipPipe);
+	pclose(ipPipe);
 }
 
 void sendMessage(char* message, char* ip, int port){

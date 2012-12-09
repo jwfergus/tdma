@@ -32,56 +32,30 @@ extern "C" {
 
 using namespace std;
 
-
-
-
-/**
- * PACK QUEUE CODE START
- */
-
+struct nfnl_handle *nfnlHandle;
+struct nfq_q_handle *nfQueue;
 struct nfq_handle *nfqHandle;
-struct nfq_q_handle *myQueue;
-struct nfnl_handle *netlinkHandle;
 
-int fd, res;
-char buf[4096];
+int netfilterFileDescriptor, nfqRecvReturn;
+char nfqRecvBuffer[4096];
 
 double max_time = 2;
-time_t start_time, current_time_diff, current_time;
-char* time_string_to_print;
+time_t startTime, currentTime;
+char* timeStringToPrint;
 
 
-	static int Callback(nfq_q_handle *myQueue, struct nfgenmsg *msg, nfq_data *pkt, void *cbData) {
-		uint32_t id = 0;
-		nfqnl_msg_packet_hdr *header;
-
-		cout << "pkt recvd: ";
-
-		if ((header = nfq_get_msg_packet_hdr(pkt))) {
-			id = ntohl(header->packet_id);
-			cout << "id " << id << ";"; 
-		}
-		cout << endl;
-		
-		current_time_diff = time(NULL) - start_time;
-		if(((double)current_time_diff) >= max_time) 
-		{
-			current_time = time(NULL);
-			time_string_to_print = ctime(&current_time);
-			cout <<"Inside CallBack > Verdict_Repeat. Time = " << time_string_to_print << endl;
-			return nfq_set_verdict(myQueue, id, NF_REPEAT, 0, NULL);
-		} 
-		current_time = time(NULL);
-		time_string_to_print = ctime(&current_time);
-		cout <<"Inside CallBack > Verdict_Accept. Time = " << time_string_to_print<< endl;
-		return nfq_set_verdict(myQueue, id, NF_ACCEPT, 0, NULL);
-		
-		
+	//
+	//	Process and release a packet onto the network
+	//
+	static int ProcessPacket(nfq_q_handle *nfQueue, struct nfgenmsg *nfqMessage, nfq_data *packet, void *unused) 
+	{
+		nfqnl_msg_packet_hdr *packetHeader;
+		uint32_t packetID = 0;
+		packetHeader = nfq_get_msg_packet_hdr(packet);
+		packetID = ntohl(packetHeader->packet_id);
+		return nfq_set_verdict(nfQueue, packetID, NF_ACCEPT, 0, NULL);
 	}
 
-	/**
-	 * PACK QUEUE CODE END
-	 */
 	 
 	 
 	 
@@ -91,7 +65,6 @@ char* time_string_to_print;
 void getIP(char* ip){
 	//Get our IP address
 	FILE *ipPipe;
-	int status;
 
 	ipPipe = popen("ifconfig | grep 'inet addr:192.' | awk '{split($2,a,\":\");print a[2]}'", "r");
 	if (ipPipe == NULL) // ERROR!
@@ -101,97 +74,67 @@ void getIP(char* ip){
 
 	if(fgets(ip, 100, ipPipe) == NULL)
 		cout << "Problem getting IP address!" << endl;
-	status = pclose(ipPipe);
+	pclose(ipPipe);
 }
 
 void closeEgress(){
 	//Get our IP address
 	FILE *iptablesPipe;
-	int status;
 
 	iptablesPipe = popen("sudo iptables -A OUTPUT ! -d 192.168.1.1 -j NFQUEUE --queue-num 0", "r");
 	if (iptablesPipe == NULL) // ERROR!
 	{
 		cout << "Could not close Egress!" << endl;
 	}
-	status = pclose(iptablesPipe);
+	pclose(iptablesPipe);
 }
 
 void openEgress(){
 	//Get our IP address
 	FILE *iptablesPipe;
-	int status;
 
 	iptablesPipe = popen("sudo iptables -D OUTPUT ! -d 192.168.1.1 -j NFQUEUE --queue-num 0", "r");
 	if (iptablesPipe == NULL) // ERROR!
 	{
 		cout << "Could not open Egress!" << endl;
 	}
-	status = pclose(iptablesPipe);
+	pclose(iptablesPipe);
+}
+
+void establishNFQueueConnection(){
+	// make initial queue handle
+	nfqHandle = nfq_open();
+
+	// Ensure no other processes are messing with packets
+	if (nfq_unbind_pf(nfqHandle, AF_INET) < 0) {
+	cout << "Problem with nfq_unbind - are you running as super user?" << endl; 
+	exit(1);
+	}
+
+	// Bind handler to AF_INET packets (IPv4)
+	nfq_bind_pf(nfqHandle, AF_INET);
+
+	// Specify the queue number and the callback
+	nfQueue = nfq_create_queue(nfqHandle,  0, &ProcessPacket, NULL);
+
+	// Makes the queue enable userspace packet copying
+	nfq_set_mode(nfQueue, NFQNL_COPY_PACKET, 0xffff);
+	
+	// Grab the file descriptor handle
+	nfnlHandle = nfq_nfnlh(nfqHandle);
+	netfilterFileDescriptor = nfnl_fd(nfnlHandle);
 }
 
 int main(int argc , char *argv[])
 {
-
-
-
-
-	/**
-	 * PACK QUEUE CODE START
-	 */
-	 
-	 
-	// Get a queue connection handle from the module
-	if (!(nfqHandle = nfq_open())) {
-	cerr << "Error in nfq_open()" << endl;
-	exit(-1);
-	}
-
-	// Unbind the handler from processing any IP packets
-	// Not totally sure why this is done, or if it's necessary...
-	if (nfq_unbind_pf(nfqHandle, AF_INET) < 0) {
-	cerr << "Error in nfq_unbind_pf()" << endl;
-	exit(1);
-	}
-
-	// Bind this handler to process IP packets...
-	if (nfq_bind_pf(nfqHandle, AF_INET) < 0) {
-	cerr << "Error in nfq_bind_pf()" << endl;
-	exit(1);
-	}
-
-	// Install a callback on queue 0
-	if (!(myQueue = nfq_create_queue(nfqHandle,  0, &Callback, NULL))) {
-	cerr << "Error in nfq_create_queue()" << endl;
-	exit(1);
-	}
-
-	// Turn on packet copy mode
-	if (nfq_set_mode(myQueue, NFQNL_COPY_PACKET, 0xffff) < 0) {
-	cerr << "Could not set packet copy mode" << endl;
-	exit(1);
-	}
-
-	netlinkHandle = nfq_nfnlh(nfqHandle);
-	fd = nfnl_fd(netlinkHandle);
-	
-	/**
-	 * PACK QUEUE CODE END
-	 */
-
-
-
-
-
-
 	char message[1024], ip[128];
 	char* incomingMessage;
 	const char* send_ip = "192.168.1.1";
 
-	//*********************************
-	// 		Main Loop
+
 	getIP(ip);
 	closeEgress();
+	establishNFQueueConnection();
 
 	while(1)
 	{
@@ -203,62 +146,39 @@ int main(int argc , char *argv[])
 		fflush(stdout);
 		delete(incomingMessage);	
 		
-		
+		//
+		//		BUSYWAIT (I KNOW I'M BAD) FOR PACKETS TO PROCESS
+		//
+		//	So this is complicated enough that it deserves a little explaining. 
+		//	While we're still within the time window to send packets (the while statement)
+		//	
+		//
+		//
+		startTime = time(NULL);
+		while ( (startTime - (currentTime = time(NULL))) < max_time ) {
+			nfqRecvReturn = recv(netfilterFileDescriptor, nfqRecvBuffer, sizeof(nfqRecvBuffer), MSG_DONTWAIT);
+			if(nfqRecvReturn >= 0)
+			{
+				nfq_handle_packet(nfqHandle, nfqRecvBuffer, nfqRecvReturn);
+			}
 			
-		/**
-		 * PACK QUEUE CODE START
-		 */
-		start_time = time(NULL);
-		while ( ((res = recv(fd, buf, sizeof(buf), MSG_DONTWAIT)) && res >= 0) || ((start_time - (current_time = time(NULL))) < max_time) ) {
 
-			// I am not totally sure why a callback mechanism is used
-			// rather than just handling it directly here, but that
-			// seems to be the convention...
-			current_time = time(NULL);
-			time_string_to_print = ctime(&current_time);
-			cout <<"Inside While before nfq_handle_packet. Time = " << time_string_to_print<< endl;
-
-			nfq_handle_packet(nfqHandle, buf, res);
-
-			// end while receiving traffic
-			if(((double)current_time_diff) >= max_time) {
-				current_time = time(NULL);
-				time_string_to_print = ctime(&current_time);
-				cout <<"Inside While > TimeDiffBreak. Time = " << time_string_to_print<< endl;
-				break;
-			} 
-		}
-		/**
-		 * PACK QUEUE CODE END
-		 */
-		 
-		 
+		}	 
 		 
 		
 		//
-		//		SEND INFO BACK TO CENTRAL SERVER
+		//		SEND ACK BACK TO CENTRAL SERVER
 		//
 		char* sendIP = new char[sizeof(send_ip)+1];
 		strcpy(sendIP, send_ip);
-		
 		sendMessage(message, sendIP, 8888);
 	
 	}
 	
-	openEgress();
-	
-	/**
-	 * PACK QUEUE CODE START
-	 */
-	nfq_destroy_queue(myQueue);
+	// Cleanup 
+	nfq_destroy_queue(nfQueue);
 	nfq_close(nfqHandle);
-	/**
-	 * PACK QUEUE CODE END
-	 */
-	 
-	 
-	 
-	 
-	 
+	openEgress();
+
 	return 0;
 }

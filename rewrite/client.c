@@ -31,7 +31,6 @@ using namespace std;
 void getIP(char* ip){
 	//Get our IP address
 	FILE *ipPipe;
-	int status;
 
 	ipPipe = popen("ifconfig | grep 'inet addr:192.' | awk '{split($2,a,\":\");print a[2]}'", "r");
 	if (ipPipe == NULL) // ERROR!
@@ -41,7 +40,7 @@ void getIP(char* ip){
 
 	if(fgets(ip, 100, ipPipe) == NULL)
 		cout << "Problem getting IP address!" << endl;
-	status = pclose(ipPipe);
+	pclose(ipPipe);
 }
 
 vector< vector<string> > getAppIPList(const char *filename)
