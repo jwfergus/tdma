@@ -81,7 +81,8 @@ void closeEgress(){
 	//Get our IP address
 	FILE *iptablesPipe;
 
-	iptablesPipe = popen("sudo iptables -A OUTPUT ! -d 192.168.1.1 -j NFQUEUE --queue-num 0", "r");
+	//iptablesPipe = popen("sudo iptables -A OUTPUT ! -d 192.168.1.1 -j NFQUEUE --queue-num 0", "r");
+	iptablesPipe = popen("sudo iptables -A OUTPUT -p icmp -j NFQUEUE --queue-num 0", "r");
 	if (iptablesPipe == NULL) // ERROR!
 	{
 		cout << "Could not close Egress!" << endl;
@@ -93,7 +94,8 @@ void openEgress(){
 	//Get our IP address
 	FILE *iptablesPipe;
 
-	iptablesPipe = popen("sudo iptables -D OUTPUT ! -d 192.168.1.1 -j NFQUEUE --queue-num 0", "r");
+	//iptablesPipe = popen("sudo iptables -D OUTPUT ! -d 192.168.1.1 -j NFQUEUE --queue-num 0", "r");
+	iptablesPipe = popen("sudo iptables -D OUTPUT -p icmp -j NFQUEUE --queue-num 0", "r");
 	if (iptablesPipe == NULL) // ERROR!
 	{
 		cout << "Could not open Egress!" << endl;
@@ -156,6 +158,7 @@ int main(int argc , char *argv[])
 		//
 		startTime = time(NULL);
 		while ( (startTime - (currentTime = time(NULL))) < max_time ) {
+			cout << "start time: " << startTime << "current time: " << time(NULL) << endl;
 			nfqRecvReturn = recv(netfilterFileDescriptor, nfqRecvBuffer, sizeof(nfqRecvBuffer), MSG_DONTWAIT);
 			if(nfqRecvReturn >= 0)
 			{
