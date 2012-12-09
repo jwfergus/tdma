@@ -157,7 +157,7 @@ int main(int argc , char *argv[])
 		//
 		//
 		startTime = time(NULL);
-		while ( (startTime - (currentTime = time(NULL))) < max_time ) {
+		while ( ((currentTime = time(NULL))-startTime) < max_time ) {
 			cout << "start time: " << startTime << "current time: " << time(NULL) << endl;
 			nfqRecvReturn = recv(netfilterFileDescriptor, nfqRecvBuffer, sizeof(nfqRecvBuffer), MSG_DONTWAIT);
 			if(nfqRecvReturn >= 0)
