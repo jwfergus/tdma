@@ -132,13 +132,13 @@ int main(int argc , char *argv[])
 	char message[1024], ip[128];
 	char* incomingMessage;
 	const char* send_ip = "192.168.1.1";
-
+	int exitMessageReceived = 0;
 
 	getIP(ip);
 	closeEgress();
 	establishNFQueueConnection();
 
-	while(1)
+	while(!exitMessageReceived)
 	{
 		//
 		//		RECEIVE COMMAND FROM CENTRAL SERVER
