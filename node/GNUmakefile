@@ -1,10 +1,8 @@
 THIS_DIR = $(shell pwd)
 
-all: packet_queuing_submodule
+all: mel_daemon.c
 	@echo making: $(THIS_DIR)
-packet_queuing_submodule: packet_queuing_submodule.cc
-	g++ -o packet_queuing_submodule packet_queuing_submodule.cc -lnfnetlink -lnetfilter_queue
-
+	g++ -O3 -Wall -o mel_daemon mel_daemon.c ../lib/comm_functions.c -lnfnetlink -lnetfilter_queue
 clean:
 	@echo cleaning: $(THIS_DIR)
-	@rm -f *.pyc *.pyo packet_queuing_submodule
+	@rm -f mel_daemon

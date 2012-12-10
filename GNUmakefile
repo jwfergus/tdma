@@ -1,4 +1,4 @@
-DIRS	= command_server demonstration node rewrite
+DIRS	= controlServer demonstration node
 MAIN_DIR = $(shell pwd)
 MAKEFLAGS= --no-print-directory
 
