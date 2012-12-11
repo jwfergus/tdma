@@ -99,7 +99,7 @@ int main(int argc , char *argv[])
 	//
 	//	Loop over Time Slot -> Application -> Node IP
 	//
-	vector< vector<string> > ApplicationList = getAppIPList("test.txt");
+	vector< vector<string> > ApplicationList = getAppIPList("demo.schedule");
 	for (int slotCount = 0; slotCount < NUMBER_OF_SLOTS; slotCount++)
 	{
 
