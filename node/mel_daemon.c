@@ -78,11 +78,9 @@ void getIP(char* ip){
 }
 
 void closeEgress(){
-	//Get our IP address
 	FILE *iptablesPipe;
 
 	iptablesPipe = popen("sudo iptables -A OUTPUT ! -d 192.168.1.1 -j NFQUEUE --queue-num 0", "r");
-	//iptablesPipe = popen("sudo iptables -A OUTPUT -p icmp -j NFQUEUE --queue-num 0", "r");
 	if (iptablesPipe == NULL) // ERROR!
 	{
 		cout << "Could not close Egress!" << endl;
@@ -91,14 +89,34 @@ void closeEgress(){
 }
 
 void openEgress(){
-	//Get our IP address
 	FILE *iptablesPipe;
 
 	iptablesPipe = popen("sudo iptables -D OUTPUT ! -d 192.168.1.1 -j NFQUEUE --queue-num 0", "r");
-	//iptablesPipe = popen("sudo iptables -D OUTPUT -p icmp -j NFQUEUE --queue-num 0", "r");
 	if (iptablesPipe == NULL) // ERROR!
 	{
 		cout << "Could not open Egress!" << endl;
+	}
+	pclose(iptablesPipe);
+}
+
+void closeIngress(){
+	FILE *iptablesPipe;
+
+	iptablesPipe = popen("sudo iptables -A INPUT ! -s 192.168.1.1 -j DROP", "r");
+	if (iptablesPipe == NULL) // ERROR!
+	{
+		cout << "Could not close Ingress!" << endl;
+	}
+	pclose(iptablesPipe);
+}
+
+void openIngress(){
+	FILE *iptablesPipe;
+
+	iptablesPipe = popen("sudo iptables -D INPUT ! -s 192.168.1.1 -j DROP", "r");
+	if (iptablesPipe == NULL) // ERROR!
+	{
+		cout << "Could not open Ingress!" << endl;
 	}
 	pclose(iptablesPipe);
 }
@@ -136,6 +154,7 @@ int main(int argc , char *argv[])
 
 	getIP(ip);
 	closeEgress();
+	closeIngress();
 	establishNFQueueConnection();
 
 	while(!exitMessageReceived)
@@ -144,6 +163,7 @@ int main(int argc , char *argv[])
 		//		RECEIVE COMMAND FROM CENTRAL SERVER
 		//
 		incomingMessage = receiveMessage(ip, 8888);
+		openIngress();
 		printf("\n******mel_daemon - Data Rcvd**\nmessage = %s\n",incomingMessage);
 		fflush(stdout);
 		delete(incomingMessage);	
@@ -167,6 +187,7 @@ int main(int argc , char *argv[])
 			
 
 		}	 
+		closeIngress();
 		 
 		
 		//
