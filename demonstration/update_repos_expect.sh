@@ -31,7 +31,7 @@ send "sudo rm -r mutual-exclusion-logic\r"
 expect "mel:"
 send "$pass\r" 
 expect "$ "
-send "git clone git@impact.asu.edu:mutual-exclusion-logic.git\r"
+send "git clone git@github.com:jwfergus/mutual-exclusion-logic.git\r"
 expect "$ "
 
 
