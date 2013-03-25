@@ -11,7 +11,7 @@
 
 
 # IMPORTANT VARIABLE, WILL NOT WORK WITHOUT CHANGE
-set pass "CBCT1305"
+set pass "impactlab"
 
 # Get IP address as input
 set input_ip $argv
