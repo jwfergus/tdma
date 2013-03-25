@@ -43,6 +43,9 @@ double max_time = 2;
 time_t startTime, currentTime;
 char* timeStringToPrint;
 
+// Sleep time between time windows:
+
+unsigned int usecs = 150000;
 
 	//
 	//	Process and release a packet onto the network
@@ -164,6 +167,7 @@ int main(int argc , char *argv[])
 		//
 		incomingMessage = receiveMessage(ip, 8888);
 		openIngress();
+		usleep(usecs);
 		printf("\n******mel_daemon - Data Rcvd**\nmessage = %s\n",incomingMessage);
 		fflush(stdout);
 		delete(incomingMessage);	
