@@ -45,7 +45,7 @@ char* timeStringToPrint;
 
 // Sleep time between time windows:
 
-unsigned int usecs = 150000;
+unsigned int usecs = 300000;
 
 	//
 	//	Process and release a packet onto the network
