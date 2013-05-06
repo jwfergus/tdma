@@ -2,7 +2,7 @@
 
 ##################
 # Expect Script
-# v1
+# v1.0
 # author: Joshua Ferguson <joshuawferguson@gmail.com>
 # 
 # Script for executing a command over SSH or sending a file through scp

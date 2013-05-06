@@ -8,7 +8,7 @@
 # Main script for checking dependencies on compute nodes.
 #
 # Parameters:
-#	1: List of Node IP Addresses
+#	1: File with List of Node IP Addresses
 #	2: user
 ##################
 
